@@ -1,3 +1,5 @@
+global using JTM.Model;
+global using JTM.DTO;
 using JTM.Data;
 using Microsoft.EntityFrameworkCore;
 
