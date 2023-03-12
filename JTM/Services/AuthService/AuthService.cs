@@ -14,14 +14,12 @@ namespace JTM.Services.AuthService
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMailService _mailService;
 
-        public AuthService(DataContext dataContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IMailService mailService)
+        public AuthService(DataContext dataContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _dataContext = dataContext;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
-            _mailService = mailService;
         }
 
         public async Task<AuthResponseDto> Login(UserDto request)
@@ -29,7 +27,7 @@ namespace JTM.Services.AuthService
             var user = await _dataContext.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
             if (user is null)
             {
-                return new AuthResponseDto { Message = "User not found. " };
+                return new AuthResponseDto { Message = "User not found." };
             }
             if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             {
@@ -138,7 +136,6 @@ namespace JTM.Services.AuthService
 
             _dataContext.Add(user);
             await _dataContext.SaveChangesAsync();
-            await _mailService.SendConfirmationEmail(user);
             return user;
         }
 
