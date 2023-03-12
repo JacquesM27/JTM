@@ -13,10 +13,11 @@ namespace JTM.Model
         public string RefreshToken { get; set; } = string.Empty;
         public DateTime TokenCreated { get; set; }
         public DateTime TokenExpires { get; set; }
-        public bool EmailConfirmed { get; set; }
+        public bool EmailConfirmed { get; set; } = false;
         public string? ActivationToken { get; set; }
         public DateTime ActivationTokenExpires { get; set; }
-        public bool Banned { get; set; }
+        public string? PasswordResetToken { get; set; }
+        public bool Banned { get; set; } = false;
 
         public List<WorkingTime> WorkingTimes { get; set; }
     }
