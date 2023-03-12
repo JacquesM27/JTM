@@ -6,5 +6,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public Task SendPasswordResetEmail(User user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

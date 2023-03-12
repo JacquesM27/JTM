@@ -3,5 +3,6 @@
     public interface IMailService
     {
         Task SendConfirmationEmail(User user);
+        Task SendPasswordResetEmail(User user);
     }
 }
