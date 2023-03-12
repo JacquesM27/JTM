@@ -2,9 +2,10 @@
 {
     public interface IAuthService
     {
-        Task<User> RegisterUser(UserDto request);
+        Task<User> RegisterUser(UserRegisterDto request);
         Task<AuthResponseDto> Login(UserDto request);
         Task<AuthResponseDto> RefreshToken();
-        Task<User> Confirm(int userId, string token);
+        Task<AuthResponseDto> ConfirmAccount(int userId, string token);
+        Task<AuthResponseDto> ChangePassword(ChangePasswordDto request);
     }
 }
