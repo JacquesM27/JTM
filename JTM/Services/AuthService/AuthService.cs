@@ -92,11 +92,10 @@ namespace JTM.Services.AuthService
             };
         }
 
-
         public async Task<AuthResponseDto> RefreshToken()
         {
             var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
-            var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.RefreshToken== refreshToken);
+            var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.RefreshToken == refreshToken);
             if (user is null)
             {
                 return new AuthResponseDto { Message = "Invalid Refresh Token!" };
@@ -119,11 +118,16 @@ namespace JTM.Services.AuthService
             };
         }
 
-        public async Task<User> RegisterUser(UserRegisterDto request)
+        public async Task<AuthResponseDto> RegisterUser(UserRegisterDto request)
         {
+            var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.Email.Equals(request.Email));
+            if (user is not null)
+            {
+                return new AuthResponseDto { Message = "Email is already taken." };
+            }
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            User user = new()
+            User newUser = new()
             {
                 Username = request.UserName,
                 Email = request.Email,
@@ -134,9 +138,24 @@ namespace JTM.Services.AuthService
                 PasswordResetToken = null
             };
 
-            _dataContext.Add(user);
+            _dataContext.Add(newUser);
             await _dataContext.SaveChangesAsync();
-            return user;
+            return new AuthResponseDto
+            { 
+                Success= true,
+            };
+        }
+
+        public async Task<AuthResponseDto> ForgetPassword(string email)
+        {
+            var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.Email.Equals(email));
+            if(user is null)
+            {
+                return new AuthResponseDto { Message = "Invalid user." };
+            }
+            user.PasswordTokenExpires= DateTime.UtcNow.AddDays(1);
+            user.PasswordResetToken= Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+            return new AuthResponseDto() { Success= true,};
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
@@ -205,5 +224,6 @@ namespace JTM.Services.AuthService
             passwordSalt = hmac.Key;
             passwordHash= hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
         }
+
     }
 }
