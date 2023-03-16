@@ -17,6 +17,7 @@ namespace JTM.Model
         public string? ActivationToken { get; set; }
         public DateTime ActivationTokenExpires { get; set; }
         public string? PasswordResetToken { get; set; }
+        public DateTime PasswordTokenExpires { get; set; }
         public bool Banned { get; set; } = false;
 
         public List<WorkingTime> WorkingTimes { get; set; }
