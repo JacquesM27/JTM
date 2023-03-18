@@ -8,5 +8,6 @@
         Task<AuthResponseDto> ConfirmAccount(int userId, string token);
         Task<AuthResponseDto> ChangePassword(ChangePasswordDto request);
         Task<AuthResponseDto> ForgetPassword(string email);
+        Task<AuthResponseDto> RefreshActivationToken(string email);
     }
 }

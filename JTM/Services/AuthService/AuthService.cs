@@ -1,8 +1,11 @@
-﻿using JTM.Data;
+﻿using Dapper;
+using JTM.Data;
+using JTM.Data.DapperConnection;
 using JTM.Model;
 using JTM.Services.MailService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -14,17 +17,21 @@ namespace JTM.Services.AuthService
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDapperConnectionFactory _connectionFactory;
 
-        public AuthService(DataContext dataContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(DataContext dataContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IDapperConnectionFactory connectionFactory)
         {
             _dataContext = dataContext;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+            _connectionFactory = connectionFactory;
         }
 
         public async Task<AuthResponseDto> Login(UserDto request)
         {
-            var user = await _dataContext.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
+            var user = await _dataContext.Users
+                .AsNoTracking()
+                .SingleOrDefaultAsync(u => u.Email == request.Email);
             if (user is null)
             {
                 return new AuthResponseDto { Message = "User not found." };
@@ -60,6 +67,8 @@ namespace JTM.Services.AuthService
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.PasswordResetToken = null;
+
+            await _dataContext.SaveChangesAsync();
             return new AuthResponseDto { Success = true, };
         }
 
@@ -95,7 +104,9 @@ namespace JTM.Services.AuthService
         public async Task<AuthResponseDto> RefreshToken()
         {
             var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
-            var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.RefreshToken == refreshToken);
+            var user = await _dataContext.Users
+                .AsNoTracking()
+                .SingleOrDefaultAsync(c => c.RefreshToken == refreshToken);
             if (user is null)
             {
                 return new AuthResponseDto { Message = "Invalid Refresh Token!" };
@@ -146,6 +157,20 @@ namespace JTM.Services.AuthService
             };
         }
 
+        public async Task<AuthResponseDto> RefreshActivationToken(string email)
+        {
+            var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.Email.Equals(email));
+            if (user is null)
+            {
+                return new AuthResponseDto { Message = "Invalid user." };
+            }
+            user.ActivationToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+            user.ActivationTokenExpires = DateTime.UtcNow.AddDays(1);
+
+            await _dataContext.SaveChangesAsync();
+            return new AuthResponseDto { Success= true, };
+        }
+
         public async Task<AuthResponseDto> ForgetPassword(string email)
         {
             var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.Email.Equals(email));
@@ -155,6 +180,7 @@ namespace JTM.Services.AuthService
             }
             user.PasswordTokenExpires= DateTime.UtcNow.AddDays(1);
             user.PasswordResetToken= Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+            await _dataContext.SaveChangesAsync();
             return new AuthResponseDto() { Success= true,};
         }
 
@@ -211,11 +237,12 @@ namespace JTM.Services.AuthService
             _httpContextAccessor?.HttpContext?.Response
                 .Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
 
-            user.RefreshToken = refreshToken.Token;
-            user.TokenCreated = refreshToken.Created;
-            user.TokenExpires = refreshToken.Expires;
-
-            await _dataContext.SaveChangesAsync();
+            string query = @"UPDATE dbo.Users 
+                            SET RefreshToken = @Token, TokenCreated = @Created, TokenExpires = @Expires
+                            WHERE Id = @userId";
+            var parameters = new { refreshToken.Token, refreshToken.Created, refreshToken.Expires, userId = user.Id };
+            using var connection = _connectionFactory.DbConnection;
+            await connection.ExecuteAsync(query, parameters);
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
