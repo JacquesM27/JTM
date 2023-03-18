@@ -45,7 +45,7 @@ namespace JTM.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<string>> RefreshToken(UserDto userDto)
+        public async Task<ActionResult<AuthResponseDto>> RefreshToken(UserDto userDto)
         {
             var response = await _authService.RefreshToken();
             if (response.Success)
@@ -65,7 +65,44 @@ namespace JTM.Controllers
                 return BadRequest(response.Message);
             }
             await _mailService.SendPasswordResetEmail(email);
-            return Ok(response);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("confirm")]
+        public async Task<ActionResult> ConfirmAccount(int userId, string token)
+        {
+            var response = await _authService.ConfirmAccount(userId, token);
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("refresh-confirm")]
+        public async Task<ActionResult> RefreshConfirmToken(string email)
+        {
+            var response = await _authService.RefreshActivationToken(email);
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            await _mailService.SendConfirmationEmail(email);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("change-password")]
+        public async Task<ActionResult> ChangePassword(ChangePasswordDto request)
+        {
+            var response = await _authService.ChangePassword(request);
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            return Ok();
         }
     }
 }
