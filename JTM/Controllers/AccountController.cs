@@ -45,7 +45,7 @@ namespace JTM.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<AuthResponseDto>> RefreshToken(UserDto userDto)
+        public async Task<ActionResult<AuthResponseDto>> RefreshToken()
         {
             var response = await _authService.RefreshToken();
             if (response.Success)
@@ -81,7 +81,7 @@ namespace JTM.Controllers
         }
 
         [HttpPost]
-        [Route("refresh-confirm")]
+        [Route("confirm-refresh")]
         public async Task<ActionResult> RefreshConfirmToken(string email)
         {
             var response = await _authService.RefreshActivationToken(email);
