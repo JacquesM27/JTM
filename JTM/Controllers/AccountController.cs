@@ -1,7 +1,4 @@
-﻿using JTM.DTO;
-using JTM.Services.AuthService;
-using JTM.Services.MailService;
-using Microsoft.AspNetCore.Http;
+﻿using JTM.Services.AuthService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JTM.Controllers
@@ -11,12 +8,12 @@ namespace JTM.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly IMailService _mailService;
+        //private readonly IMailService _mailService;
 
-        public AccountController(IAuthService authService, IMailService mailService)
+        public AccountController(IAuthService authService)
         {
             _authService = authService;
-            _mailService = mailService;
+            //_mailService = mailService;
         }
 
         [HttpPost]
@@ -28,7 +25,7 @@ namespace JTM.Controllers
             {
                 return BadRequest(response.Message);
             }
-            await _mailService.SendConfirmationEmail(request.Email);
+            //await _mailService.SendConfirmationEmail(request.Email);
             return Ok();
         }
 
@@ -64,7 +61,7 @@ namespace JTM.Controllers
             {
                 return BadRequest(response.Message);
             }
-            await _mailService.SendPasswordResetEmail(email);
+            //await _mailService.SendPasswordResetEmail(email);
             return Ok();
         }
 
@@ -72,6 +69,10 @@ namespace JTM.Controllers
         [Route("confirm")]
         public async Task<ActionResult> ConfirmAccount(int userId, string token)
         {
+            if (userId == 0)
+            {
+                return BadRequest("Missing userId");
+            }
             var response = await _authService.ConfirmAccount(userId, token);
             if (!response.Success)
             {
@@ -89,7 +90,7 @@ namespace JTM.Controllers
             {
                 return BadRequest(response.Message);
             }
-            await _mailService.SendConfirmationEmail(email);
+            //await _mailService.SendConfirmationEmail(email);
             return Ok();
         }
 
@@ -104,5 +105,7 @@ namespace JTM.Controllers
             }
             return Ok();
         }
+
+        //TODO ban user
     }
 }
