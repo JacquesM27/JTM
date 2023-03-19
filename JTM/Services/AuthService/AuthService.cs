@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using JTM.Data;
 using JTM.Data.DapperConnection;
+using JTM.DTO.Validator;
 using JTM.Model;
 using JTM.Services.MailService;
 using Microsoft.EntityFrameworkCore;
@@ -131,6 +132,14 @@ namespace JTM.Services.AuthService
 
         public async Task<AuthResponseDto> RegisterUser(UserRegisterDto request)
         {
+            var userValidator = new UserRegisterDtoValidator(_dataContext);
+            var validatorResult = await userValidator.ValidateAsync(request);
+            if (!validatorResult.IsValid)
+            {
+                var errorMessages = validatorResult.Errors.Select(x => x.ErrorMessage).ToList();
+                return new AuthResponseDto { Message = string.Join("\n", errorMessages) };
+            }
+
             var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.Email.Equals(request.Email));
             if (user is not null)
             {

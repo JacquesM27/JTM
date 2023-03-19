@@ -9,6 +9,8 @@ using JTM.Services.MailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using JTM.Data.DapperConnection;
+using FluentValidation;
+using JTM.DTO.Validator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddTransient<IDapperConnectionFactory, DapperConnectionFactory>();
+builder.Services.AddScoped<IValidator<UserRegisterDto>, UserRegisterDtoValidator>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<DataContext>(options =>
@@ -72,3 +75,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+public partial class Program { }
