@@ -11,7 +11,7 @@ using JTM.DTO;
 using FluentAssertions;
 using JTM.Model;
 
-namespace JTM.IntegrationTests
+namespace JTM.IntegrationTests.ControllersTests
 {
     public class AuthControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
