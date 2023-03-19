@@ -40,7 +40,7 @@ namespace JTM.IntegrationTests
                         //{
                         //    services.Remove(item);
                         //}
-                        services.AddScoped<IDapperConnectionFactory, TestDapperConnectionFactory>();
+                        //services.AddScoped<IDapperConnectionFactory, TestDapperConnectionFactory>();
                         services.AddSingleton(_authServiceMock.Object);
                     });
                 })
