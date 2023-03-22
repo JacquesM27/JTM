@@ -4,7 +4,7 @@ namespace JTM.IntegrationTests.Helpers
 {
     public class CleanTestDatabaseToTest
     {
-        private static async Task CleanDb(string connectionString)
+        public static async Task CleanDb(string connectionString)
         {
             string query = @"ALTER TABLE [dbo].[WorkingTimes] DROP CONSTRAINT [FK_WorkingTimes_Users_EmployeeId]
 
