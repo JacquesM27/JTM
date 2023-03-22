@@ -48,7 +48,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task Login_ForValidUser_ReturnsOk()
+        public async Task Login_ForValidUser_ReturnOk()
         {
             //arrange
             var authResponseDto = new AuthResponseDto()
@@ -74,7 +74,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task Login_ForInvalidUser_ReturnsBadRequest()
+        public async Task Login_ForInvalidUser_ReturnBadRequest()
         {
             //arrange
             var authResponseDto = new AuthResponseDto() { Success = false, };
@@ -97,7 +97,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task Register_ForInvalidModel_ReturnsBadRequest()
+        public async Task Register_ForInvalidModel_ReturnBadRequest()
         {
             //arrange
             var registerUser = new UserRegisterDto()
@@ -119,7 +119,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task Register_ForValidModel_ReturnsOk()
+        public async Task Register_ForValidModel_ReturnOk()
         {
             //arrange
             var registerUser = new UserRegisterDto()
@@ -141,7 +141,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ForgetPassword_ForInvalidEmail_ReturnsBadRequest()
+        public async Task ForgetPassword_ForInvalidEmail_ReturnBadRequest()
         {
             //arrange
             _authServiceMock
@@ -156,7 +156,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ForgetPassword_ForNoneEmail_ReturnsBadRequest()
+        public async Task ForgetPassword_ForNoneEmail_ReturnBadRequest()
         {
             //arrange
 
@@ -168,7 +168,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ForgetPassword_ForValidData_ReturnsOk()
+        public async Task ForgetPassword_ForValidData_ReturnOk()
         {
             //arrange
             _authServiceMock
@@ -183,7 +183,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task RefreshToken_ForNoneCache_ReturnsBadRequest()
+        public async Task RefreshToken_ForNoneCache_ReturnBadRequest()
         {
             //arrange
             _authServiceMock
@@ -198,7 +198,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task RefreshToken_ForOkCache_ReturnsOk()
+        public async Task RefreshToken_ForOkCache_ReturnOk()
         {
             //arrange
             _authServiceMock
@@ -213,7 +213,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForMissingToken_ReturnsBadRequest()
+        public async Task ConfirmAccount_ForMissingToken_ReturnBadRequest()
         {
             //arrange
 
@@ -225,7 +225,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForMissingUserId_ReturnsBadRequest()
+        public async Task ConfirmAccount_ForMissingUserId_ReturnBadRequest()
         {
             //arrange
 
@@ -237,7 +237,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForInvalidInput_ReturnsOk()
+        public async Task ConfirmAccount_ForInvalidInput_ReturnOk()
         {
             //arrange
             _authServiceMock
@@ -252,7 +252,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForValidInput_ReturnsOk()
+        public async Task ConfirmAccount_ForValidInput_ReturnOk()
         {
             //arrange
             _authServiceMock
@@ -267,7 +267,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task RefreshConfirmToken_ForMissingEmail_ReturnsBadRequest()
+        public async Task RefreshConfirmToken_ForMissingEmail_ReturnBadRequest()
         {
             //arrange
 
@@ -279,7 +279,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task RefreshConfirmToken_ForValidEmail_ReturnsOk()
+        public async Task RefreshConfirmToken_ForValidEmail_ReturnOk()
         {
             //arrange
             _authServiceMock
@@ -294,7 +294,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task RefreshConfirmToken_ForInvalidInput_ReturnsBadRequest()
+        public async Task RefreshConfirmToken_ForInvalidInput_ReturnBadRequest()
         {
             //arrange
             _authServiceMock
@@ -309,7 +309,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ChangePassword_ForInvalidInput_ReturnsBadRequest()
+        public async Task ChangePassword_ForInvalidInput_ReturnBadRequest()
         {
             //arrange
             _authServiceMock
@@ -329,7 +329,7 @@ namespace JTM.IntegrationTests.ControllersTests
         }
 
         [Fact]
-        public async Task ChangePassword_ForValidInput_ReturnsOk()
+        public async Task ChangePassword_ForValidInput_ReturnOk()
         {
             //arrange
             _authServiceMock
