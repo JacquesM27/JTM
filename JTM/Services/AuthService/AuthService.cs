@@ -2,6 +2,7 @@
 using JTM.Data;
 using JTM.Data.DapperConnection;
 using JTM.DTO.Validator;
+using JTM.Helper.PasswordHelper;
 using JTM.Model;
 using JTM.Services.MailService;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,11 @@ namespace JTM.Services.AuthService
             {
                 return new AuthResponseDto { Message = "User not found." };
             }
-            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+            else if (user.EmailConfirmed is false)
+            {
+                return new AuthResponseDto { Message = "Account not activated." };
+            }
+            else if (!PasswordHelper.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             {
                 return new AuthResponseDto { Message = "Wrong password." };
             }
@@ -60,11 +65,15 @@ namespace JTM.Services.AuthService
             {
                 return new AuthResponseDto { Message = "Invalid user." };
             }
+            else if (user.PasswordTokenExpires < DateTime.UtcNow)
+            {
+                return new AuthResponseDto { Message = "Token expires." };
+            }
             else if (!request.Token.Equals(user.PasswordResetToken))
             {
                 return new AuthResponseDto { Message = "Invalid token." };
             }
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            PasswordHelper.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.PasswordResetToken = null;
@@ -145,7 +154,7 @@ namespace JTM.Services.AuthService
             {
                 return new AuthResponseDto { Message = "Email is already taken." };
             }
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            PasswordHelper.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             User newUser = new()
             {
@@ -193,12 +202,7 @@ namespace JTM.Services.AuthService
             return new AuthResponseDto() { Success= true,};
         }
 
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using var hmac = new HMACSHA512(passwordSalt);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return computedHash.SequenceEqual(passwordHash);
-        }
+        
 
         private string CreateToken(User user)
         {
@@ -252,13 +256,6 @@ namespace JTM.Services.AuthService
             var parameters = new { refreshToken.Token, refreshToken.Created, refreshToken.Expires, userId = user.Id };
             using var connection = _connectionFactory.DbConnection;
             await connection.ExecuteAsync(query, parameters);
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using var hmac = new HMACSHA512();
-            passwordSalt = hmac.Key;
-            passwordHash= hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
         }
 
     }
