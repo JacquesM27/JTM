@@ -119,7 +119,7 @@ namespace JTM.Services.AuthService
                 .SingleOrDefaultAsync(c => c.RefreshToken == refreshToken);
             if (user is null)
             {
-                return new AuthResponseDto { Message = "Invalid Refresh Token!" };
+                return new AuthResponseDto { Message = "Invalid user." };
             }
             else if (user.TokenExpires < DateTime.UtcNow)
             {
@@ -181,6 +181,10 @@ namespace JTM.Services.AuthService
             if (user is null)
             {
                 return new AuthResponseDto { Message = "Invalid user." };
+            }
+            if (user.EmailConfirmed)
+            {
+                return new AuthResponseDto { Message = "User already confirmed." };
             }
             user.ActivationToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
             user.ActivationTokenExpires = DateTime.UtcNow.AddDays(1);
