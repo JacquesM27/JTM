@@ -6,11 +6,13 @@ using JTM.Helper.PasswordHelper;
 using JTM.IntegrationTests.Helpers;
 using JTM.Model;
 using JTM.Services.AuthService;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
+using Moq;
 using System.Security.Cryptography;
-using Xunit;
 
 namespace JTM.IntegrationTests.ServicesTests
 {
@@ -20,6 +22,7 @@ namespace JTM.IntegrationTests.ServicesTests
         private readonly WebApplicationFactory<Program> _applicationFactory;
         private readonly DataContext _dataContext;
         private readonly IAuthService _authService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
         public AuthServiceTests(WebApplicationFactory<Program> applicationFactory)
         {
@@ -51,6 +54,8 @@ namespace JTM.IntegrationTests.ServicesTests
             var servicescope = _applicationFactory.Services.CreateScope();
             _authService = servicescope.ServiceProvider.GetService<IAuthService>();
             _dataContext = servicescope.ServiceProvider.GetService<DataContext>();
+            _contextAccessor = servicescope.ServiceProvider.GetService<IHttpContextAccessor>();
+            CleanTestDatabaseToTest.CleanDb(_testConnectionString);
         }
 
         [Fact]
@@ -68,6 +73,7 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.False(result.Success);
+            Assert.True(result.Message.Equals("User not found."));
         }
 
         [Fact]
@@ -87,7 +93,7 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.False(result.Success);
-            await CleanTestDatabaseToTest.CleanDb(_testConnectionString);
+            Assert.True(result.Message.Equals("Wrong password."));
         }
 
         [Fact]
@@ -107,7 +113,7 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.False(result.Success);
-            await CleanTestDatabaseToTest.CleanDb(_testConnectionString);
+            Assert.True(result.Message.Equals("Account not activated."));
         }
 
         [Fact]
@@ -127,7 +133,7 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.True(result.Success);
-            await CleanTestDatabaseToTest.CleanDb(_testConnectionString);
+            Assert.True(result.Message.Equals(string.Empty));
         }
 
         [Fact]
@@ -146,6 +152,7 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Invalid user."));
         }
 
         [Fact]
@@ -154,7 +161,7 @@ namespace JTM.IntegrationTests.ServicesTests
             //Arrange
             string password = "123";
             var user = await AddFakeConfirmedUser(password);
-            await ExpireUserToken(user);
+            await ExpireUserResetPasswordToken(user);
             var changePassDto = new ChangePasswordDto
             {
                 Password = password,
@@ -167,6 +174,7 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Token expires."));
         }
 
         [Fact]
@@ -187,6 +195,7 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Invalid token."));
         }
 
         [Fact]
@@ -207,6 +216,192 @@ namespace JTM.IntegrationTests.ServicesTests
 
             //Assert
             Assert.True(result.Success);
+            Assert.True(result.Message.Equals(string.Empty));
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_ForInvalidUser_ShouldReturnFalse()
+        {
+            //Arrange
+            int userId = 0;
+            string token = string.Empty;
+
+            //Act 
+            var result = await _authService.ConfirmAccount(userId, token);
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Invalid user."));
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_ForConfirmedUser_ShouldReturnFalse()
+        {
+            //Arrange
+            var user = await AddFakeConfirmedUser("123");
+
+            //Act
+            var result = await _authService.ConfirmAccount(user.Id, user.ActivationToken);
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("User already confirmed."));
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_ForExpiredToken_ShouldReturnFalse()
+        {
+            //Arrange
+            var user = await AddFakeUnconfirmedUser("123");
+            await ExpireUserActivationToken(user);
+
+            //Act
+            var result = await _authService.ConfirmAccount(user.Id, user.ActivationToken);
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Token expired."));
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_ForInvalidToken_ShouldReturnFalse()
+        {
+            //Arrange
+            var user = await AddFakeUnconfirmedUser("123");
+
+            //Act
+            var result = await _authService.ConfirmAccount(user.Id, string.Empty);
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Invalid token."));
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_ForValidData_ShouldReturnTrue()
+        {
+            //Arrange
+            var user = await AddFakeUnconfirmedUser("123");
+
+            //Act
+            var result = await _authService.ConfirmAccount(user.Id, user.ActivationToken);
+
+            //Assert
+            Assert.True(result.Success);
+            Assert.True(result.Message.Equals(string.Empty));
+        }
+
+        [Fact]
+        public async Task RefreshToken_ForInvalidUser_ShouldReturnFalse()
+        {
+            //Arrange
+            ForwardRefreshTokenAsCookie("666");
+
+            //Act
+            var result = await _authService.RefreshToken();
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Invalid user."));
+        }
+
+        [Fact]
+        public async Task RefreshToken_ForExpiredToken_ShouldReturnFalse()
+        {
+            //Arrange
+            var user = await AddFakeConfirmedUser("123");
+            await SetExpiredDummyRefreshToken(user);
+            ForwardRefreshTokenAsCookie(user.RefreshToken);
+
+            //Act
+            var result = await _authService.RefreshToken();
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Token expired."));
+        }
+
+        [Fact]
+        public async Task RefreshToken_ForValidToken_ShouldReturnTrue()
+        {
+            //Arrange
+            var user = await AddFakeConfirmedUser("123");
+            await SetActiveDummyRefreshToken(user);
+            ForwardRefreshTokenAsCookie(user.RefreshToken);
+
+            //Act
+            var result = await _authService.RefreshToken();
+
+            //Assert
+            Assert.True(result.Success);
+            Assert.True(result.Message.Equals(string.Empty));
+        }
+
+
+        [Fact]
+        public async Task RefreshActivationToken_ForInvalidUser_ShouldReturnFalse()
+        {
+            //Arrange
+            //Act 
+            var result = await _authService.RefreshActivationToken(string.Empty);
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Invalid user."));
+        }
+
+        [Fact]
+        public async Task RefreshActivationToken_ForConfirmedUser_ShouldReturnFalse()
+        {
+            //Arrange
+            var user = await AddFakeConfirmedUser("123");
+
+            //Act 
+            var result = await _authService.RefreshActivationToken(user.Email);
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("User already confirmed."));
+        }
+
+        [Fact]
+        public async Task RefreshActivationToken_ForUnonfirmedUser_ShouldReturnTrue()
+        {
+            //Arrange
+            var user = await AddFakeUnconfirmedUser("123");
+
+            //Act 
+            var result = await _authService.RefreshActivationToken(user.Email);
+
+            //Assert
+            Assert.True(result.Success);
+            Assert.True(result.Message.Equals(string.Empty));
+        }
+
+        [Fact]
+        public async Task ForgetPassword_ForInvalidUser_ShouldReturnFalse()
+        {
+            //Arrange
+            //Act
+            var result = await _authService.ForgetPassword(string.Empty);
+
+            //Assert
+            Assert.False(result.Success);
+            Assert.True(result.Message.Equals("Invalid user."));
+        }
+
+        [Fact]
+        public async Task ForgetPassword_ForValidUser_ShouldReturnTrue()
+        {
+            //Arrange
+            var user = await AddFakeConfirmedUser("123");
+
+            //Act
+            var result = await _authService.ForgetPassword(user.Email);
+
+            //Assert
+            Assert.True(result.Success);
+            Assert.True(result.Message.Equals(string.Empty));
         }
 
 
@@ -239,18 +434,47 @@ namespace JTM.IntegrationTests.ServicesTests
                 PasswordSalt = passwordSalt,
                 EmailConfirmed = false,
                 PasswordTokenExpires = DateTime.UtcNow.AddDays(1),
-                PasswordResetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
+                PasswordResetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                ActivationToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                ActivationTokenExpires = DateTime.UtcNow.AddDays(1)
             };
             _dataContext.Add(user);
             await _dataContext.SaveChangesAsync();
             return user;
         }
 
-        private async Task ExpireUserToken(User user)
+        private async Task ExpireUserResetPasswordToken(User user)
         {
             user.PasswordTokenExpires = DateTime.UtcNow.AddDays(-1);
             await _dataContext.SaveChangesAsync();
         }
 
+        private async Task ExpireUserActivationToken(User user)
+        {
+            user.ActivationTokenExpires = DateTime.UtcNow.AddDays(-1);
+            await _dataContext.SaveChangesAsync();
+        }
+
+        private async Task SetActiveDummyRefreshToken(User user)
+        {
+            user.RefreshToken = "123";
+            user.TokenExpires= DateTime.UtcNow.AddDays(1);
+            await _dataContext.SaveChangesAsync();
+        }
+
+        private async Task SetExpiredDummyRefreshToken(User user)
+        {
+            user.RefreshToken = "123";
+            user.TokenExpires = DateTime.UtcNow.AddDays(-1);
+            await _dataContext.SaveChangesAsync();
+        }
+
+        private void ForwardRefreshTokenAsCookie(string token)
+        {
+            var context = new DefaultHttpContext();
+            context.Request.Cookies = HttpCookieHelper.MockRequestCookieCollection("refreshToken", token);
+            var accessor = new HttpContextAccessor { HttpContext = context };
+            _contextAccessor.HttpContext = accessor.HttpContext;
+        }
     }
 }
