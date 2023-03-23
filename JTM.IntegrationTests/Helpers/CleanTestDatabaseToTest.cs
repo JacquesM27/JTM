@@ -4,7 +4,7 @@ namespace JTM.IntegrationTests.Helpers
 {
     public class CleanTestDatabaseToTest
     {
-        public static async Task CleanDb(string connectionString)
+        public static void CleanDb(string connectionString)
         {
             string query = @"ALTER TABLE [dbo].[WorkingTimes] DROP CONSTRAINT [FK_WorkingTimes_Users_EmployeeId]
 
@@ -16,8 +16,8 @@ namespace JTM.IntegrationTests.Helpers
                             ALTER TABLE [dbo].[WorkingTimes] CHECK CONSTRAINT [FK_WorkingTimes_Users_EmployeeId]";
             using SqlConnection connection = new(connectionString);
             SqlCommand command = new(query, connection);
-            await command.Connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+            command.Connection.Open();
+            command.ExecuteNonQuery();
         }
     }
 }
