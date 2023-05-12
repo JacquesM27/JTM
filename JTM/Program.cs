@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using JTM.Services.AuthService;
-using JTM.Services.MailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using JTM.Data.DapperConnection;
@@ -33,7 +32,6 @@ builder.Services.AddSwaggerGen(options =>
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddTransient<IDapperConnectionFactory, DapperConnectionFactory>();
 builder.Services.AddScoped<IValidator<UserRegisterDto>, UserRegisterDtoValidator>();
 
