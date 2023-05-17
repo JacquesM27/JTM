@@ -1,15 +1,16 @@
 global using JTM.Model;
-global using JTM.DTO;
+using FluentValidation.AspNetCore;
 using JTM.Data;
+using JTM.Data.DapperConnection;
+using JTM.Middleware;
+using JTM.Services.AuthService;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using JTM.Services.AuthService;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using JTM.Data.DapperConnection;
-using FluentValidation;
-using JTM.DTO.Validator;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,12 +31,27 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
+//builder.Services.AddControllers()
+//.AddFluentValidation(options =>
+//{
+//    // Validate child properties and root collection elements
+//    options.ImplicitlyValidateChildProperties = true;
+//    options.ImplicitlyValidateRootCollectionElements = true;
+
+//    // Automatic registration of validators in assembly
+//    options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+//});
+
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+
+builder.Services.AddTransient<ExceptionHandlingMessage>();
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddTransient<IDapperConnectionFactory, DapperConnectionFactory>();
-builder.Services.AddScoped<IValidator<UserRegisterDto>, UserRegisterDtoValidator>();
 
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -72,7 +88,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+app.UseMiddleware<ExceptionHandlingMessage>();
 
+app.Run();
 
 public partial class Program { }

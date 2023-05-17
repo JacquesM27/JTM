@@ -1,8 +1,11 @@
-﻿namespace JTM.Services.AuthService
+﻿using JTM.DTO.Account;
+using JTM.DTO.Account.RegisterUser;
+
+namespace JTM.Services.AuthService
 {
     public interface IAuthService
     {
-        Task<AuthResponseDto> RegisterUser(UserRegisterDto request);
+        Task<AuthResponseDto> RegisterUser(RegisterUserDto request);
         Task<AuthResponseDto> Login(UserDto request);
         Task<AuthResponseDto> RefreshToken();
         Task<AuthResponseDto> ConfirmAccount(int userId, string token);

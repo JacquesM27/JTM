@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using JTM.Data;
 using JTM.Data.DapperConnection;
-using JTM.DTO.Validator;
+using JTM.DTO.Account;
+using JTM.DTO.Account.RegisterUser;
 using JTM.Helper.PasswordHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -136,15 +137,15 @@ namespace JTM.Services.AuthService
             };
         }
 
-        public async Task<AuthResponseDto> RegisterUser(UserRegisterDto request)
+        public async Task<AuthResponseDto> RegisterUser(RegisterUserDto request)
         {
-            var userValidator = new UserRegisterDtoValidator(_dataContext);
-            var validatorResult = await userValidator.ValidateAsync(request);
-            if (!validatorResult.IsValid)
-            {
-                var errorMessages = validatorResult.Errors.Select(x => x.ErrorMessage).ToList();
-                return new AuthResponseDto { Message = string.Join("\n", errorMessages) };
-            }
+            //var userValidator = new UserRegisterDtoValidator(_dataContext);
+            //var validatorResult = await userValidator.ValidateAsync(request);
+            //if (!validatorResult.IsValid)
+            //{
+            //    var errorMessages = validatorResult.Errors.Select(x => x.ErrorMessage).ToList();
+            //    return new AuthResponseDto { Message = string.Join("\n", errorMessages) };
+            //}
 
             var user = await _dataContext.Users.SingleOrDefaultAsync(c => c.Email.Equals(request.Email));
             if (user is not null)
@@ -258,6 +259,5 @@ namespace JTM.Services.AuthService
             using var connection = _connectionFactory.DbConnection;
             await connection.ExecuteAsync(query, parameters);
         }
-
     }
 }

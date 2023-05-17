@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using JTM;
-using JTM.Data;
-using JTM.Services.AuthService;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Connections;
-using JTM.Data.DapperConnection;
+﻿using FluentAssertions;
+using JTM.DTO.Account;
+using JTM.DTO.Account.RegisterUser;
 using JTM.IntegrationTests.Helpers;
+using JTM.Services.AuthService;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
-using JTM.DTO;
-using FluentAssertions;
-using JTM.Model;
 
 namespace JTM.IntegrationTests.ControllersTests
 {
@@ -100,14 +95,14 @@ namespace JTM.IntegrationTests.ControllersTests
         public async Task Register_ForInvalidModel_ReturnBadRequest()
         {
             //arrange
-            var registerUser = new UserRegisterDto()
+            var registerUser = new RegisterUserDto()
             {
                 Email = "test",
                 Password = "password",
                 UserName = "test"
             };
             _authServiceMock
-               .Setup(e => e.RegisterUser(It.IsAny<UserRegisterDto>()))
+               .Setup(e => e.RegisterUser(It.IsAny<RegisterUserDto>()))
                .ReturnsAsync(new AuthResponseDto() { Success = false, });
             var httpContent = registerUser.ToJsonHttpContent();
 
@@ -122,14 +117,14 @@ namespace JTM.IntegrationTests.ControllersTests
         public async Task Register_ForValidModel_ReturnOk()
         {
             //arrange
-            var registerUser = new UserRegisterDto()
+            var registerUser = new RegisterUserDto()
             {
                 Email = "test",
                 Password = "password",
                 UserName = "test"
             };
             _authServiceMock
-               .Setup(e => e.RegisterUser(It.IsAny<UserRegisterDto>()))
+               .Setup(e => e.RegisterUser(It.IsAny<RegisterUserDto>()))
                .ReturnsAsync(new AuthResponseDto() { Success = true, });
             var httpContent = registerUser.ToJsonHttpContent();
 

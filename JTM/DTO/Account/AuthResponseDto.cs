@@ -1,4 +1,4 @@
-﻿    namespace JTM.DTO
+﻿namespace JTM.DTO.Account
 {
     public class AuthResponseDto
     {

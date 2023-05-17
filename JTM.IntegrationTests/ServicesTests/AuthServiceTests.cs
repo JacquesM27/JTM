@@ -1,17 +1,13 @@
 ﻿using FluentAssertions;
 using JTM.Data;
 using JTM.Data.DapperConnection;
-using JTM.DTO;
+using JTM.DTO.Account;
 using JTM.Helper.PasswordHelper;
 using JTM.IntegrationTests.Helpers;
 using JTM.Model;
 using JTM.Services.AuthService;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Net.Http.Headers;
-using Moq;
 using System.Security.Cryptography;
 
 namespace JTM.IntegrationTests.ServicesTests

@@ -1,4 +1,8 @@
-﻿using JTM.Services.AuthService;
+﻿using JTM.CQRS.Command.Auth.RegisterUser;
+using JTM.DTO.Account;
+using JTM.DTO.Account.RegisterUser;
+using JTM.Services.AuthService;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JTM.Controllers
@@ -7,24 +11,31 @@ namespace JTM.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly IMediator _mediator;
         private readonly IAuthService _authService;
-        //private readonly IMailService _mailService;
 
-        public AccountController(IAuthService authService)
+        public AccountController(IAuthService authService, IMediator mediator)
         {
             _authService = authService;
-            //_mailService = mailService;
+            _mediator = mediator;
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<AuthResponseDto>> RegisterUser(UserRegisterDto request)
+        public async Task<ActionResult<AuthResponseDto>> RegisterUser(RegisterUserDto request)
         {
-            var response = await _authService.RegisterUser(request);
-            if (!response.Success)
+            var command = new RegisterUserCommand
             {
-                return BadRequest(response.Message);
-            }
+                Email = request.Email,
+                Password = request.Password,
+                UserName = request.UserName
+            };
+            int id = await _mediator.Send(command);
+            //var response = await _authService.RegisterUser(request);
+            //if (!response.Success)
+            //{
+            //    return BadRequest(response.Message);
+            //}
             //await _mailService.SendConfirmationEmail(request.Email);
             return Ok();
         }
