@@ -5,12 +5,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
+using FromQueueMailSender.Services.Mail.Formats;
 
 namespace FromQueueMailSender.Services.Mail
 {
     internal class MailService : IMailService
     {
-        public async Task SendEmailAsync(string receiverName, string receiverEmail, string subject, string htmlBody)
+        public async Task SendActivationEmailAsync(string receiverName, string receiverEmail,  string url)
+        {
+            string mailContent = ActivateAccountContent.GetContent(receiverName, url);
+            await SendEmailAsync(receiverName, receiverEmail, "JTM - Aktywacja konta", mailContent);
+        }
+
+        public async Task SendPasswordReminderEmailAsync(string receiverName, string receiverEmail,  string url)
+        {
+            string mailContent = ResetPasswordContent.GetContent(receiverName, url);
+            await SendEmailAsync(receiverName, receiverEmail, "JTM - Resetowanie hasła", mailContent);
+        }
+
+        private async Task SendEmailAsync(string receiverName, string receiverEmail, string subject, string htmlBody)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("JTM NoReply", "jm.jtm@outlook.com"));
