@@ -1,18 +1,20 @@
-﻿using MimeKit;
+﻿using FromQueueMailSender.Services.Mail.Formats;
 using MailKit.Net.Smtp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using System.Reflection;
-using FromQueueMailSender.Services.Mail.Formats;
+using MimeKit;
 
 namespace FromQueueMailSender.Services.Mail
 {
     internal class MailService : IMailService
     {
+        private readonly MailConfiguration _configuration;
+
+        public MailService(IConfiguration configuration)
+        {
+            SettingsFile settings = new();
+            configuration.Bind(settings);
+            _configuration = settings.MailConfiguration!;
+        }
         public async Task SendActivationEmailAsync(string receiverName, string receiverEmail,  string url)
         {
             string mailContent = ActivateAccountContent.GetContent(receiverName, url);
@@ -28,7 +30,7 @@ namespace FromQueueMailSender.Services.Mail
         private async Task SendEmailAsync(string receiverName, string receiverEmail, string subject, string htmlBody)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("JTM NoReply", "jm.jtm@outlook.com"));
+            message.From.Add(new MailboxAddress(_configuration.Username, _configuration.Email));
             message.To.Add(new MailboxAddress(receiverName, receiverEmail));
             message.Subject = subject;
             message.Body = new TextPart("html")
@@ -37,8 +39,8 @@ namespace FromQueueMailSender.Services.Mail
             };
 
             using var client = new SmtpClient();
-            await client.ConnectAsync("smtp-mail.outlook.com", 587, false);
-            await client.AuthenticateAsync("jm.jtm@outlook.com", "HasloMail123");
+            await client.ConnectAsync(_configuration.Host, _configuration.Port,_configuration.SSL);
+            await client.AuthenticateAsync(_configuration.Email, _configuration.Password);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
         }
