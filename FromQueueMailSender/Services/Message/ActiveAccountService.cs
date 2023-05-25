@@ -1,12 +1,12 @@
 ﻿using FromQueueMailSender.DTO;
 using FromQueueMailSender.Services.Mail;
-using Microsoft.Extensions.Configuration;
+using FromQueueMailSender.Services.ProgramConfiguration;
 
 namespace FromQueueMailSender.Services.Message
 {
     internal class ActiveAccountService : AbstractMessageReaderService
     {
-        public ActiveAccountService(IMailService mailService, IConfiguration configuration)
+        public ActiveAccountService(IMailService mailService, IProgramConfiguration configuration)
             : base(mailService, configuration) { }
 
         protected override async Task HandleMessage(MessageDto messageDto)

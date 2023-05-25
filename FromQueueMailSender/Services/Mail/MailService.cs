@@ -1,4 +1,5 @@
 ﻿using FromQueueMailSender.Services.Mail.Formats;
+using FromQueueMailSender.Services.ProgramConfiguration;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
@@ -9,11 +10,9 @@ namespace FromQueueMailSender.Services.Mail
     {
         private readonly MailConfiguration _configuration;
 
-        public MailService(IConfiguration configuration)
+        public MailService(IProgramConfiguration configuration)
         {
-            SettingsFile settings = new();
-            configuration.Bind(settings);
-            _configuration = settings.MailConfiguration!;
+            _configuration = configuration.Connfiguration.MailConfiguration!;
         }
         public async Task SendActivationEmailAsync(string receiverName, string receiverEmail,  string url)
         {

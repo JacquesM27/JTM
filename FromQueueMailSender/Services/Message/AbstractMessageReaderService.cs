@@ -1,5 +1,6 @@
 ﻿using FromQueueMailSender.DTO;
 using FromQueueMailSender.Services.Mail;
+using FromQueueMailSender.Services.ProgramConfiguration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
@@ -18,11 +19,10 @@ namespace FromQueueMailSender.Services.Message
         protected readonly SettingsFile _settings;
         protected string _queueName;
 
-        public AbstractMessageReaderService(IMailService mailService, IConfiguration configuration)
+        public AbstractMessageReaderService(IMailService mailService, IProgramConfiguration configuration)
         {
             _mailService = mailService;
-            _settings = new();
-            configuration.Bind(_settings);
+            _settings = configuration.Connfiguration;
 
             _connectionFactory = new()
             {

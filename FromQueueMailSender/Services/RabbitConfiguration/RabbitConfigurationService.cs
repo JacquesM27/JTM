@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FromQueueMailSender.Services.ProgramConfiguration;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 
 namespace FromQueueMailSender.Services.RabbitConfiguration
@@ -10,10 +11,9 @@ namespace FromQueueMailSender.Services.RabbitConfiguration
         private readonly IConnection _connection;
         private readonly IModel _channel;
 
-        public RabbitConfigurationService(IConfiguration configuration)
+        public RabbitConfigurationService(IProgramConfiguration configuration)
         {
-            _settings = new();
-            configuration.Bind(_settings);
+            _settings = configuration.Connfiguration;
 
             _connectionFactory = new()
             {

@@ -1,5 +1,6 @@
 ﻿using FromQueueMailSender.Services.Mail;
 using FromQueueMailSender.Services.Message;
+using FromQueueMailSender.Services.ProgramConfiguration;
 using FromQueueMailSender.Services.RabbitConfiguration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ var host = new HostBuilder()
     })
     .ConfigureServices(services =>
     {
+        services.AddSingleton<IProgramConfiguration, ProgramConfiguration>();
         services.AddSingleton<IRabbitConfigurationService, RabbitConfigurationService>();
         services.AddSingleton<IMailService, MailService>();
         services.AddHostedService<ActiveAccountService>();
