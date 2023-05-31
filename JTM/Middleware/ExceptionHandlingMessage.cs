@@ -14,18 +14,21 @@ namespace JTM.Middleware
             }
             catch (ValidationException ex)
             {
-                await HandleExceptionAsync(context, ex);
+                await HandleValidationExceptionAsync(context, ex);
+            }
+            catch (Exception ex) 
+            {
+
             }
         }
 
-        private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+        private async Task HandleValidationExceptionAsync(HttpContext httpContext, Exception exception)
         {
             var statusCode = GetStatusCode(exception);
             var response = new
             {
                 Title = GetTitle(exception),
                 Status = statusCode,
-                Detail = exception.Message,
                 Errors = GetErrors(exception)
             };
             httpContext.Response.ContentType = "application/json";
@@ -51,7 +54,7 @@ namespace JTM.Middleware
         {
             IEnumerable<object>? errors = exception switch
             {
-                ValidationException ex => ex.Errors,
+                ValidationException ex => ex.Errors.Select(err => new { err.PropertyName, err.ErrorMessage }),
                 _ => new List<object> { exception.Message },
             };
             return errors;

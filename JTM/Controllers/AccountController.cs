@@ -1,7 +1,12 @@
-﻿using JTM.CQRS.Command.Auth.RegisterUser;
+﻿using FluentValidation;
+using JTM.CQRS.Command.ConfirmAccountuser;
+using JTM.CQRS.Command.ForgetPassowrdUser;
+using JTM.CQRS.Command.LoginUser;
+using JTM.CQRS.Command.RefreshActivationTokenUser;
+using JTM.CQRS.Command.RefreshTokenUser;
+using JTM.CQRS.Command.RegisterUser;
 using JTM.DTO.Account;
 using JTM.DTO.Account.RegisterUser;
-using JTM.Services.AuthService;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,31 +17,30 @@ namespace JTM.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IAuthService _authService;
+        private readonly IValidator<RegisterUserDto> _validator;
 
-        public AccountController(IAuthService authService, IMediator mediator)
+        public AccountController(
+            IMediator mediator,
+            IValidator<RegisterUserDto> validator)
         {
-            _authService = authService;
             _mediator = mediator;
+            _validator = validator;
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<AuthResponseDto>> RegisterUser(RegisterUserDto request)
+        public async Task<ActionResult> RegisterUser(RegisterUserDto request)
         {
+            _validator.ValidateAndThrow(request);
+
             var command = new RegisterUserCommand
             {
                 Email = request.Email,
                 Password = request.Password,
                 UserName = request.UserName
             };
-            int id = await _mediator.Send(command);
-            //var response = await _authService.RegisterUser(request);
-            //if (!response.Success)
-            //{
-            //    return BadRequest(response.Message);
-            //}
-            //await _mailService.SendConfirmationEmail(request.Email);
+            await _mediator.Send(command);
+
             return Ok();
         }
 
@@ -44,7 +48,13 @@ namespace JTM.Controllers
         [Route("login")]
         public async Task<ActionResult<AuthResponseDto>> Login(UserDto userDto)
         {
-            var response = await _authService.Login(userDto);
+            var command = new LoginUserCommand
+            {
+                Email = userDto.Email,
+                Password = userDto.Password,
+            };
+            var response = await _mediator.Send(command);
+
             if (response.Success)
             {
                 return Ok(response);
@@ -55,7 +65,9 @@ namespace JTM.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult<AuthResponseDto>> RefreshToken()
         {
-            var response = await _authService.RefreshToken();
+            var command = new RefreshTokenUserCommand();
+
+            var response = await _mediator.Send(command);
             if (response.Success)
             {
                 return Ok(response);
@@ -65,44 +77,54 @@ namespace JTM.Controllers
 
         [HttpPost]
         [Route("forget-password")]
-        public async Task<ActionResult> ForgetPassword(string email)
+        public async Task<ActionResult<AuthResponseDto>> ForgetPassword(string email)
         {
-            var response = await _authService.ForgetPassword(email);
-            if(!response.Success)
+            var command = new ForgetPasswordUserCommand
             {
-                return BadRequest(response.Message);
+                Email = email,
+            };
+
+            var response = await _mediator.Send(command);
+            if (response.Success)
+            {
+                return Ok();
             }
-            //await _mailService.SendPasswordResetEmail(email);
-            return Ok();
+            return BadRequest(response.Message);
         }
 
         [HttpPost]
         [Route("confirm")]
-        public async Task<ActionResult> ConfirmAccount(int userId, string token)
+        public async Task<ActionResult<AuthResponseDto>> ConfirmAccount(int userId, string token)
         {
-            if (userId == 0)
+            var command = new ConfirmAccountCommand
             {
-                return BadRequest("Missing userId");
-            }
-            var response = await _authService.ConfirmAccount(userId, token);
-            if (!response.Success)
+                UserId = userId,
+                Token = token
+            };
+
+            var response = await _mediator.Send(command);
+            if (response.Success)
             {
-                return BadRequest(response.Message);
+                return Ok();
             }
-            return Ok();
+            return BadRequest(response.Message);
         }
 
         [HttpPost]
         [Route("confirm-refresh")]
-        public async Task<ActionResult> RefreshConfirmToken(string email)
+        public async Task<ActionResult<AuthResponseDto>> RefreshConfirmToken(string email)
         {
-            var response = await _authService.RefreshActivationToken(email);
-            if (!response.Success)
+            var command = new RefreshActivationTokenUserCommand
+            { 
+                Email = email,
+            };
+
+            var response = await _mediator.Send(command);
+            if (response.Success)
             {
-                return BadRequest(response.Message);
+                return Ok();
             }
-            //await _mailService.SendConfirmationEmail(email);
-            return Ok();
+            return BadRequest(response.Message);
         }
 
         [HttpPost]

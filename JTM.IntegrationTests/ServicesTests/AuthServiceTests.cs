@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using JTM.Data;
-using JTM.Data.DapperConnection;
 using JTM.DTO.Account;
 using JTM.Helper.PasswordHelper;
 using JTM.IntegrationTests.Helpers;
@@ -17,7 +16,7 @@ namespace JTM.IntegrationTests.ServicesTests
         private readonly string _testConnectionString;
         private readonly WebApplicationFactory<Program> _applicationFactory;
         private readonly DataContext _dataContext;
-        private readonly IAuthService _authService;
+        private readonly ITokenService _authService;
         private readonly IHttpContextAccessor _contextAccessor;
 
         public AuthServiceTests(WebApplicationFactory<Program> applicationFactory)
@@ -39,16 +38,16 @@ namespace JTM.IntegrationTests.ServicesTests
                             options.UseSqlServer(_testConnectionString));
 
                         //dapper
-                        var IDbConnection = services.Where(s => s.ServiceType == typeof(IDapperConnectionFactory)).ToList();
-                        foreach (var item in IDbConnection)
-                        {
-                            services.Remove(item);
-                        }
-                        services.AddScoped<IDapperConnectionFactory, TestDapperConnectionFactory>();
+                        //var IDbConnection = services.Where(s => s.ServiceType == typeof(IDapperConnectionFactory)).ToList();
+                        //foreach (var item in IDbConnection)
+                        //{
+                        //    services.Remove(item);
+                        //}
+                        //services.AddScoped<IDapperConnectionFactory, TestDapperConnectionFactory>();
                     });
                 });
             var servicescope = _applicationFactory.Services.CreateScope();
-            _authService = servicescope.ServiceProvider.GetService<IAuthService>();
+            _authService = servicescope.ServiceProvider.GetService<ITokenService>();
             _dataContext = servicescope.ServiceProvider.GetService<DataContext>();
             _contextAccessor = servicescope.ServiceProvider.GetService<IHttpContextAccessor>();
             CleanTestDatabaseToTest.CleanDb(_testConnectionString);

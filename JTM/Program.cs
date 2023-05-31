@@ -1,15 +1,17 @@
 global using JTM.Model;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using JTM.Data;
-using JTM.Data.DapperConnection;
+using JTM.DTO.Account.RegisterUser;
 using JTM.Middleware;
 using JTM.Services.AuthService;
-using MediatR;
+using JTM.Services.RabbitService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using System;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,13 +44,13 @@ builder.Services.AddSwaggerGen(options =>
 //    options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 //});
 
-builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+//builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
 builder.Services.AddTransient<ExceptionHandlingMessage>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddTransient<IDapperConnectionFactory, DapperConnectionFactory>();
+builder.Services.AddSingleton<IRabbitService, RabbitService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -69,16 +71,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-//builder.Services.AddCors => soon
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI();
+//}
 
 app.UseHttpsRedirection();
 

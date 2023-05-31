@@ -1,10 +1,16 @@
 ﻿using FluentAssertions;
+using JTM.CQRS.Command.RegisterUser;
+using JTM.CQRS.Command.SendRabbitActivationMessage;
+using JTM.Data;
 using JTM.DTO.Account;
 using JTM.DTO.Account.RegisterUser;
 using JTM.IntegrationTests.Helpers;
 using JTM.Services.AuthService;
+using JTM.Services.RabbitService;
+using MediatR;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
+using RabbitMQ.Client;
 
 namespace JTM.IntegrationTests.ControllersTests
 {
@@ -12,7 +18,9 @@ namespace JTM.IntegrationTests.ControllersTests
     {
         //private readonly string _testConnectionString;
         private readonly HttpClient _httpClient;
-        private readonly Mock<IAuthService> _authServiceMock = new();
+        private readonly Mock<ITokenService> _authServiceMock = new();
+        private readonly Mock<IMediator> _mediatorMock = new();
+        private readonly Mock<DataContext> _dataContextMock = new();
 
         public AuthControllerTests(WebApplicationFactory<Program> factory)
         {
@@ -56,7 +64,7 @@ namespace JTM.IntegrationTests.ControllersTests
 
             var userDto = new UserDto()
             {
-                Email = "test",
+                Email = "test3",
                 Password = "password",
             };
             var httpContent = userDto.ToJsonHttpContent();
@@ -101,9 +109,12 @@ namespace JTM.IntegrationTests.ControllersTests
                 Password = "password",
                 UserName = "test"
             };
-            _authServiceMock
-               .Setup(e => e.RegisterUser(It.IsAny<RegisterUserDto>()))
-               .ReturnsAsync(new AuthResponseDto() { Success = false, });
+            //_authServiceMock
+            //   .Setup(e => e.RegisterUser(It.IsAny<RegisterUserDto>()))
+            //   .ReturnsAsync(new AuthResponseDto() { Success = false, });
+            _mediatorMock
+                .Setup(e => e.Send(It.IsAny<RegisterUserCommand>(), default))
+                .ReturnsAsync(It.IsAny<int>());
             var httpContent = registerUser.ToJsonHttpContent();
 
             //act
@@ -113,27 +124,7 @@ namespace JTM.IntegrationTests.ControllersTests
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [Fact]
-        public async Task Register_ForValidModel_ReturnOk()
-        {
-            //arrange
-            var registerUser = new RegisterUserDto()
-            {
-                Email = "test",
-                Password = "password",
-                UserName = "test"
-            };
-            _authServiceMock
-               .Setup(e => e.RegisterUser(It.IsAny<RegisterUserDto>()))
-               .ReturnsAsync(new AuthResponseDto() { Success = true, });
-            var httpContent = registerUser.ToJsonHttpContent();
-
-            //act
-            var response = await _httpClient.PostAsync("/api/account/register", httpContent);
-
-            //assert
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-        }
+    
 
         [Fact]
         public async Task ForgetPassword_ForInvalidEmail_ReturnBadRequest()

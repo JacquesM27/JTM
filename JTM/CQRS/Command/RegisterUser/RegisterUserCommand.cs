@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace JTM.CQRS.Command.Auth.RegisterUser
+namespace JTM.CQRS.Command.RegisterUser
 {
-    public class RegisterUserCommand : IRequest<int>
+    public class RegisterUserCommand : IRequest
     {
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

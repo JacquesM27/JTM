@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 
+[assembly: InternalsVisibleTo("FromQueueMailSender.UnitTests")]
 namespace FromQueueMailSender.Services.Mail
 {
     internal class ResetPasswordContent
