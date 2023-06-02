@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using JTM.Exceptions;
 using System.Text.Json;
 
 namespace JTM.Middleware
@@ -12,17 +13,13 @@ namespace JTM.Middleware
             {
                 await next(context);
             }
-            catch (ValidationException ex)
+            catch (Exception ex)
             {
-                await HandleValidationExceptionAsync(context, ex);
-            }
-            catch (Exception ex) 
-            {
-
+                await HandleExceptionAsync(context, ex);
             }
         }
 
-        private async Task HandleValidationExceptionAsync(HttpContext httpContext, Exception exception)
+        private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
             var statusCode = GetStatusCode(exception);
             var response = new
@@ -40,6 +37,7 @@ namespace JTM.Middleware
             exception switch
             {
                 ValidationException => StatusCodes.Status422UnprocessableEntity,
+                NotFoundException => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };
 
@@ -47,6 +45,7 @@ namespace JTM.Middleware
             exception switch
             {
                 ValidationException => "ValidationErrors",
+                NotFoundException => "NotFoundException",
                 _ => "ServerError"
             };
 
