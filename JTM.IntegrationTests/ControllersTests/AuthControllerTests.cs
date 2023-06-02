@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using JTM.CQRS.Command.RegisterUser;
 using JTM.CQRS.Command.SendRabbitActivationMessage;
+using JTM.CQRS.Command.User.RegisterUser;
 using JTM.Data;
 using JTM.DTO.Account;
 using JTM.DTO.Account.RegisterUser;
