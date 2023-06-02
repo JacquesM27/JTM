@@ -1,13 +1,15 @@
 ﻿using FluentValidation;
-using JTM.CQRS.Command.ConfirmAccountuser;
+using JTM.CQRS.Command.Account.ChangePassowrdUser;
+using JTM.CQRS.Command.Account.ConfirmAccountuser;
+using JTM.CQRS.Command.Account.RegisterUser;
 using JTM.CQRS.Command.ForgetPassowrdUser;
 using JTM.CQRS.Command.LoginUser;
 using JTM.CQRS.Command.RefreshActivationTokenUser;
 using JTM.CQRS.Command.RefreshTokenUser;
-using JTM.CQRS.Command.RegisterUser;
 using JTM.DTO.Account;
 using JTM.DTO.Account.RegisterUser;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JTM.Controllers
@@ -131,14 +133,27 @@ namespace JTM.Controllers
         [Route("change-password")]
         public async Task<ActionResult> ChangePassword(ChangePasswordDto request)
         {
-            var response = await _authService.ChangePassword(request);
-            if (!response.Success)
+            var command = new ChangePasswordCommand
             {
-                return BadRequest(response.Message);
+                Password = request.Password,
+                Token = request.Token,
+                UserId = request.UserId
+            };
+
+            var response = await _mediator.Send(command);
+            if (response.Success)
+            {
+                return Ok();
             }
-            return Ok();
+            return BadRequest(response.Message);
         }
 
-        //TODO ban user
+        [HttpPost]
+        [Route("banhammer")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> BanUser(int userId)
+        {
+
+        }
     }
 }
