@@ -5,9 +5,9 @@ using JTM.Services.TokenService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JTM.CQRS.Command.LoginUser
+namespace JTM.CQRS.Command.Account.LoginUser
 {
-    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthResponseDto>
+    public class LoginUserCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
     {
         private readonly DataContext _dataContext;
         private readonly ITokenService _authService;
@@ -18,7 +18,7 @@ namespace JTM.CQRS.Command.LoginUser
             _authService = authService;
         }
 
-        public async Task<AuthResponseDto> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var user = await _dataContext.Users
                 .SingleOrDefaultAsync(u => u.Email == request.Email, cancellationToken: cancellationToken);

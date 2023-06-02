@@ -2,10 +2,10 @@
 using JTM.CQRS.Command.Account.ChangePassowrdUser;
 using JTM.CQRS.Command.Account.ConfirmAccountuser;
 using JTM.CQRS.Command.Account.RegisterUser;
-using JTM.CQRS.Command.ForgetPassowrdUser;
-using JTM.CQRS.Command.LoginUser;
-using JTM.CQRS.Command.RefreshActivationTokenUser;
-using JTM.CQRS.Command.RefreshTokenUser;
+using JTM.CQRS.Command.Account.ForgetPassowrdUser;
+using JTM.CQRS.Command.Account.LoginUser;
+using JTM.CQRS.Command.Account.RefreshActivationTokenUser;
+using JTM.CQRS.Command.Account.RefreshTokenUser;
 using JTM.DTO.Account;
 using JTM.DTO.Account.RegisterUser;
 using MediatR;
@@ -50,7 +50,7 @@ namespace JTM.Controllers
         [Route("login")]
         public async Task<ActionResult<AuthResponseDto>> Login(UserDto userDto)
         {
-            var command = new LoginUserCommand
+            var command = new LoginCommand
             {
                 Email = userDto.Email,
                 Password = userDto.Password,
@@ -67,7 +67,7 @@ namespace JTM.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult<AuthResponseDto>> RefreshToken()
         {
-            var command = new RefreshTokenUserCommand();
+            var command = new RefreshTokenCommand();
 
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -81,7 +81,7 @@ namespace JTM.Controllers
         [Route("forget-password")]
         public async Task<ActionResult<AuthResponseDto>> ForgetPassword(string email)
         {
-            var command = new ForgetPasswordUserCommand
+            var command = new ForgetPasswordCommand
             {
                 Email = email,
             };
@@ -116,7 +116,7 @@ namespace JTM.Controllers
         [Route("confirm-refresh")]
         public async Task<ActionResult<AuthResponseDto>> RefreshConfirmToken(string email)
         {
-            var command = new RefreshActivationTokenUserCommand
+            var command = new RefreshConfirmTokenCommand
             { 
                 Email = email,
             };

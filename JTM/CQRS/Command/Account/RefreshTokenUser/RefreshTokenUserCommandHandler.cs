@@ -4,9 +4,9 @@ using JTM.Services.TokenService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JTM.CQRS.Command.RefreshTokenUser
+namespace JTM.CQRS.Command.Account.RefreshTokenUser
 {
-    public class RefreshTokenUserCommandHandler : IRequestHandler<RefreshTokenUserCommand, AuthResponseDto>
+    public class RefreshTokenUserCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponseDto>
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -22,7 +22,7 @@ namespace JTM.CQRS.Command.RefreshTokenUser
             _tokenService = tokenService;
         }
 
-        public async Task<AuthResponseDto> Handle(RefreshTokenUserCommand request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
             var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
             var user = await _dataContext.Users

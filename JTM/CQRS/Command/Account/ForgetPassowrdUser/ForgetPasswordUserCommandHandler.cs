@@ -6,9 +6,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
-namespace JTM.CQRS.Command.ForgetPassowrdUser
+namespace JTM.CQRS.Command.Account.ForgetPassowrdUser
 {
-    public class ForgetPasswordUserCommandHandler : IRequestHandler<ForgetPasswordUserCommand, AuthResponseDto>
+    public class ForgetPasswordUserCommandHandler : IRequestHandler<ForgetPasswordCommand, AuthResponseDto>
     {
         private readonly DataContext _dataContext;
         private readonly IRabbitService _rabbitService;
@@ -18,7 +18,7 @@ namespace JTM.CQRS.Command.ForgetPassowrdUser
             _rabbitService = rabbitService;
         }
 
-        public async Task<AuthResponseDto> Handle(ForgetPasswordUserCommand request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDto> Handle(ForgetPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _dataContext.Users
                 .SingleOrDefaultAsync(c => c.Email.Equals(request.Email), cancellationToken);

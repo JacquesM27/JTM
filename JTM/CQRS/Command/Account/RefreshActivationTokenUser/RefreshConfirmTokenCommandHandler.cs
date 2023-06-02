@@ -8,18 +8,18 @@ using System.Security.Cryptography;
 
 namespace JTM.CQRS.Command.Account.RefreshActivationTokenUser
 {
-    public class RefreshActivationTokenUserCommandHandler : IRequestHandler<RefreshActivationTokenUserCommand, AuthResponseDto>
+    public class RefreshConfirmTokenCommandHandler : IRequestHandler<RefreshConfirmTokenCommand, AuthResponseDto>
     {
         private readonly DataContext _dataContext;
         private readonly IRabbitService _rabbitService;
 
-        public RefreshActivationTokenUserCommandHandler(DataContext dataContext, IRabbitService rabbitService)
+        public RefreshConfirmTokenCommandHandler(DataContext dataContext, IRabbitService rabbitService)
         {
             _dataContext = dataContext;
             _rabbitService = rabbitService;
         }
 
-        public async Task<AuthResponseDto> Handle(RefreshActivationTokenUserCommand request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDto> Handle(RefreshConfirmTokenCommand request, CancellationToken cancellationToken)
         {
             var user = await _dataContext.Users
                 .SingleOrDefaultAsync(c => c.Email.Equals(request.Email), cancellationToken: cancellationToken);
