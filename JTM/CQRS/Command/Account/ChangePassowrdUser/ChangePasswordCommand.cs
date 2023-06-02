@@ -1,7 +1,7 @@
 ﻿using JTM.DTO.Account;
 using MediatR;
 
-namespace JTM.CQRS.Command.ChangePassowrdUser
+namespace JTM.CQRS.Command.Account.ChangePassowrdUser
 {
     public class ChangePasswordCommand : IRequest<AuthResponseDto>
     {

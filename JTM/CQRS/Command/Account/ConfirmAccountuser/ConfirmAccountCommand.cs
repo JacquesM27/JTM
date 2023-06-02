@@ -1,7 +1,7 @@
 ﻿using JTM.DTO.Account;
 using MediatR;
 
-namespace JTM.CQRS.Command.ConfirmAccountuser
+namespace JTM.CQRS.Command.Account.ConfirmAccountuser
 {
     public class ConfirmAccountCommand : IRequest<AuthResponseDto>
     {

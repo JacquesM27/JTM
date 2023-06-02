@@ -4,7 +4,7 @@ using JTM.Helper.PasswordHelper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JTM.CQRS.Command.ChangePassowrdUser
+namespace JTM.CQRS.Command.Account.ChangePassowrdUser
 {
     public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, AuthResponseDto>
     {

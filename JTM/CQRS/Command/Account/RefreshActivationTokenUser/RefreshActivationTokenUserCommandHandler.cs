@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
-namespace JTM.CQRS.Command.RefreshActivationTokenUser
+namespace JTM.CQRS.Command.Account.RefreshActivationTokenUser
 {
     public class RefreshActivationTokenUserCommandHandler : IRequestHandler<RefreshActivationTokenUserCommand, AuthResponseDto>
     {
