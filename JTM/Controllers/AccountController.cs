@@ -153,7 +153,7 @@ namespace JTM.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> BanUser(int userId)
         {
-
+            throw new NotImplementedException("Oops");
         }
     }
 }
