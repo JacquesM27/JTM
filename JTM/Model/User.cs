@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace JTM.Model
+﻿namespace JTM.Model
 {
     public class User
     {
