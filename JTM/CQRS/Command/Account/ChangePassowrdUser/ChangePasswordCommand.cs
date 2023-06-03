@@ -2,7 +2,7 @@
 
 namespace JTM.CQRS.Command.Account
 {
-    public record ChangePasswordCommand : IRequest
+    public sealed record ChangePasswordCommand : IRequest
     {
         public int UserId { get; init; }
         public string Password { get; init; }

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace JTM.CQRS.Query.WorkingTime
 {
-    public record GetWorkingTimeQuery : IRequest<DetailsWorkingTimeDto>
+    public sealed record GetWorkingTimeQuery : IRequest<DetailsWorkingTimeDto>
     {
         public int WorkingTimeId { get; init; }
 

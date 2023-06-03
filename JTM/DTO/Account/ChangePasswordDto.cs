@@ -1,6 +1,6 @@
 ﻿namespace JTM.DTO.Account
 {
-    public record ChangePasswordDto
+    public sealed record ChangePasswordDto
     {
         public int UserId { get; init; }
         public string Password { get; init; }

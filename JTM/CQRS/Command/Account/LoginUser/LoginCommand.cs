@@ -3,7 +3,7 @@ using MediatR;
 
 namespace JTM.CQRS.Command.Account
 {
-    public record LoginCommand : IRequest<AuthResponseDto>
+    public sealed record LoginCommand : IRequest<AuthResponseDto>
     {
         public string Email { get; init; }
         public string Password { get; init; }

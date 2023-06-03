@@ -1,6 +1,6 @@
 ﻿namespace JTM.DTO.Account.RegisterUser
 {
-    public record MessageDto
+    public sealed record MessageDto
     {
         public string ReceiverName { get; init; }
         public string ReceiverEmail { get; init; }

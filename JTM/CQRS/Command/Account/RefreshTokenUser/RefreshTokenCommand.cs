@@ -3,7 +3,7 @@ using MediatR;
 
 namespace JTM.CQRS.Command.Account
 {
-    public record RefreshTokenCommand : IRequest<AuthResponseDto>
+    public sealed record RefreshTokenCommand : IRequest<AuthResponseDto>
     {
     }
 }

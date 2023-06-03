@@ -2,7 +2,7 @@
 
 namespace JTM.CQRS.Command.Account
 {
-    public record ForgetPasswordCommand : IRequest
+    public sealed record ForgetPasswordCommand : IRequest
     {
         public string Email { get; init; }
 

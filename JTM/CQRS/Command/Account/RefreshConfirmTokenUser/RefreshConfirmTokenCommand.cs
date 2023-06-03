@@ -2,7 +2,7 @@
 
 namespace JTM.CQRS.Command.Account
 {
-    public record RefreshConfirmTokenCommand : IRequest
+    public sealed record RefreshConfirmTokenCommand : IRequest
     {
         public string Email { get; init; }
 

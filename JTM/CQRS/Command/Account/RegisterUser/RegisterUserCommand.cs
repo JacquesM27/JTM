@@ -2,7 +2,7 @@
 
 namespace JTM.CQRS.Command.Account
 {
-    public record RegisterUserCommand : IRequest
+    public sealed record RegisterUserCommand : IRequest
     {
         public string UserName { get; init; }
         public string Email { get; init; }
