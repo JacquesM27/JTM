@@ -3,10 +3,17 @@ using MediatR;
 
 namespace JTM.CQRS.Command.Account.ChangePassowrdUser
 {
-    public class ChangePasswordCommand : IRequest<AuthResponseDto>
+    public record ChangePasswordCommand : IRequest<AuthResponseDto>
     {
-        public int UserId { get; set; }
-        public string Password { get; set; } = string.Empty;
-        public string Token { get; set; } = string.Empty;
+        public int UserId { get; init; }
+        public string Password { get; init; }
+        public string Token { get; init; }
+
+        public ChangePasswordCommand(int userId, string password, string token)
+        {
+            UserId = userId;
+            Password = password;
+            Token = token;
+        }
     }
 }

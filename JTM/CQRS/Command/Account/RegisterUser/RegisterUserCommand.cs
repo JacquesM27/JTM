@@ -2,10 +2,17 @@
 
 namespace JTM.CQRS.Command.Account.RegisterUser
 {
-    public class RegisterUserCommand : IRequest
+    public record RegisterUserCommand : IRequest
     {
-        public string UserName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string UserName { get; init; }
+        public string Email { get; init; }
+        public string Password { get; init; }
+
+        public RegisterUserCommand(string userName, string email, string password)
+        {
+            UserName = userName;
+            Email = email;
+            Password = password;
+        }
     }
 }

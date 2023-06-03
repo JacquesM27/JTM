@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using JTM.CQRS.Command.Account.ChangePassowrdUser;
-using JTM.CQRS.Command.Account.ConfirmAccountuser;
 using JTM.CQRS.Command.Account.RegisterUser;
 using JTM.CQRS.Command.Account.ForgetPassowrdUser;
 using JTM.CQRS.Command.Account.LoginUser;
@@ -11,6 +10,8 @@ using JTM.DTO.Account.RegisterUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using JTM.CQRS.Command.Account.ConfirmAccountUser;
+using JTM.CQRS.Command.Account.BanUser;
 
 namespace JTM.Controllers
 {
@@ -36,11 +37,11 @@ namespace JTM.Controllers
             _validator.ValidateAndThrow(request);
 
             var command = new RegisterUserCommand
-            {
-                Email = request.Email,
-                Password = request.Password,
-                UserName = request.UserName
-            };
+            (
+                userName: request.UserName,
+                email: request.Email,
+                password: request.Password
+            );
             await _mediator.Send(command);
 
             return Ok();
@@ -51,12 +52,12 @@ namespace JTM.Controllers
         public async Task<ActionResult<AuthResponseDto>> Login(UserDto userDto)
         {
             var command = new LoginCommand
-            {
-                Email = userDto.Email,
-                Password = userDto.Password,
-            };
-            var response = await _mediator.Send(command);
+            (
+              email: userDto.Email,
+              password: userDto.Password
+            );
 
+            var response = await _mediator.Send(command);
             if (response.Success)
             {
                 return Ok(response);
@@ -82,9 +83,9 @@ namespace JTM.Controllers
         public async Task<ActionResult<AuthResponseDto>> ForgetPassword(string email)
         {
             var command = new ForgetPasswordCommand
-            {
-                Email = email,
-            };
+            (
+                email: email
+            );
 
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -99,10 +100,10 @@ namespace JTM.Controllers
         public async Task<ActionResult<AuthResponseDto>> ConfirmAccount(int userId, string token)
         {
             var command = new ConfirmAccountCommand
-            {
-                UserId = userId,
-                Token = token
-            };
+            (
+                userId: userId,
+                token: token
+            );
 
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -117,9 +118,9 @@ namespace JTM.Controllers
         public async Task<ActionResult<AuthResponseDto>> RefreshConfirmToken(string email)
         {
             var command = new RefreshConfirmTokenCommand
-            { 
-                Email = email,
-            };
+            ( 
+                email: email
+            );
 
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -134,11 +135,11 @@ namespace JTM.Controllers
         public async Task<ActionResult> ChangePassword(ChangePasswordDto request)
         {
             var command = new ChangePasswordCommand
-            {
-                Password = request.Password,
-                Token = request.Token,
-                UserId = request.UserId
-            };
+            (
+                userId: request.UserId,
+                password: request.Password,
+                token: request.Token
+            );
 
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -153,7 +154,17 @@ namespace JTM.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> BanUser(int userId)
         {
-            throw new NotImplementedException("Oops");
+            var command = new BanUserCommand
+            (
+                userId: userId
+            );
+            
+            var response = await _mediator.Send(command);
+            if (response.Success)
+            {
+                return Ok();
+            }
+            return BadRequest(response.Message);
         }
     }
 }

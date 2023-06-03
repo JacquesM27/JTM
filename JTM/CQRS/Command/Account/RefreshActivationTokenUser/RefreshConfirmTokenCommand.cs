@@ -3,8 +3,13 @@ using MediatR;
 
 namespace JTM.CQRS.Command.Account.RefreshActivationTokenUser
 {
-    public class RefreshConfirmTokenCommand : IRequest<AuthResponseDto>
+    public record RefreshConfirmTokenCommand : IRequest<AuthResponseDto>
     {
-        public string? Email { get; set; }
+        public string Email { get; init; }
+
+        public RefreshConfirmTokenCommand(string email)
+        {
+            Email = email;
+        }
     }
 }

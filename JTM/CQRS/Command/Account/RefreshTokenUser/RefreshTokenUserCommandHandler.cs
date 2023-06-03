@@ -26,7 +26,8 @@ namespace JTM.CQRS.Command.Account.RefreshTokenUser
         {
             var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
             var user = await _dataContext.Users
-                .SingleOrDefaultAsync(c => c.RefreshToken == refreshToken);
+                .SingleOrDefaultAsync(c => c.RefreshToken == refreshToken, cancellationToken);
+
             if (user is null)
             {
                 return new AuthResponseDto { Message = "Invalid user." };
@@ -34,6 +35,10 @@ namespace JTM.CQRS.Command.Account.RefreshTokenUser
             else if (user.TokenExpires < DateTime.UtcNow)
             {
                 return new AuthResponseDto { Message = "Token expired." };
+            }
+            else if (user.Banned)
+            {
+                return new AuthResponseDto { Message = "Account banned." };
             }
 
             string token = _tokenService.CreateToken(user);

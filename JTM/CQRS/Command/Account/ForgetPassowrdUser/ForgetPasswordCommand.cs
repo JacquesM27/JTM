@@ -3,8 +3,13 @@ using MediatR;
 
 namespace JTM.CQRS.Command.Account.ForgetPassowrdUser
 {
-    public class ForgetPasswordCommand : IRequest<AuthResponseDto>
+    public record ForgetPasswordCommand : IRequest<AuthResponseDto>
     {
-        public string? Email { get; set; }
+        public string? Email { get; init; }
+
+        public ForgetPasswordCommand(string? email)
+        {
+            Email = email;
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace JTM.CQRS.Command.Account.RegisterUser
                 PasswordResetToken = null
             };
 
-            await _dataContext.AddAsync(newUser);
+            await _dataContext.AddAsync(newUser, cancellationToken);
             await _dataContext.SaveChangesAsync(cancellationToken);
             SendActivationMessage(newUser);
         }

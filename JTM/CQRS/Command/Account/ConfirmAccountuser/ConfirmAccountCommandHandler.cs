@@ -3,7 +3,7 @@ using JTM.DTO.Account;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JTM.CQRS.Command.Account.ConfirmAccountuser
+namespace JTM.CQRS.Command.Account.ConfirmAccountUser
 {
     public class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand, AuthResponseDto>
     {
