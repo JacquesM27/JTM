@@ -1,7 +1,7 @@
 ﻿using JTM.DTO.Account;
 using MediatR;
 
-namespace JTM.CQRS.Command.Account.LoginUser
+namespace JTM.CQRS.Command.Account
 {
     public record LoginCommand : IRequest<AuthResponseDto>
     {

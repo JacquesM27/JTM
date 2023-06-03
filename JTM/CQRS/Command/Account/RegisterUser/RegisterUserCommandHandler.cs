@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
-namespace JTM.CQRS.Command.Account.RegisterUser
+namespace JTM.CQRS.Command.Account
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
     {

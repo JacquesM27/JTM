@@ -33,19 +33,21 @@ namespace JTM.Middleware
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
 
-        private int GetStatusCode(Exception exception) =>
-            exception switch
+        private int GetStatusCode(Exception exception) 
+            => exception switch
             {
                 ValidationException => StatusCodes.Status422UnprocessableEntity,
                 NotFoundException => StatusCodes.Status404NotFound,
+                AuthException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
 
-        private string GetTitle(Exception exception) =>
-            exception switch
+        private string GetTitle(Exception exception)
+            => exception switch
             {
                 ValidationException => "ValidationErrors",
-                NotFoundException => "NotFoundException",
+                NotFoundException => "EntityNotFound",
+                AuthException => "UserErrors",
                 _ => "ServerError"
             };
 

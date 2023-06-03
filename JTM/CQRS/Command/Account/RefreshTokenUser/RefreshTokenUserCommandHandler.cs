@@ -1,10 +1,11 @@
 ﻿using JTM.Data;
 using JTM.DTO.Account;
+using JTM.Exceptions;
 using JTM.Services.TokenService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JTM.CQRS.Command.Account.RefreshTokenUser
+namespace JTM.CQRS.Command.Account
 {
     public class RefreshTokenUserCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponseDto>
     {
@@ -29,29 +30,20 @@ namespace JTM.CQRS.Command.Account.RefreshTokenUser
                 .SingleOrDefaultAsync(c => c.RefreshToken == refreshToken, cancellationToken);
 
             if (user is null)
-            {
-                return new AuthResponseDto { Message = "Invalid user." };
-            }
-            else if (user.TokenExpires < DateTime.UtcNow)
-            {
-                return new AuthResponseDto { Message = "Token expired." };
-            }
+                throw new AuthException("Invalid user.");
             else if (user.Banned)
-            {
-                return new AuthResponseDto { Message = "Account banned." };
-            }
+                throw new AuthException("Account banned.");
+            else if (user.TokenExpires < DateTime.UtcNow)
+                throw new AuthException("Token expired.");
 
             string token = _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.CreateRefreshToken();
             await _tokenService.SetRefreshToken(newRefreshToken, user);
 
-            return new AuthResponseDto
-            {
-                Success = true,
-                Token = token,
-                RefreshToken = newRefreshToken.Token,
-                TokenExpires = newRefreshToken.Expires
-            };
+            return new AuthResponseDto(
+                token: token,
+                refreshToken: newRefreshToken.Token,
+                tokenExpires: newRefreshToken.Expires);
         }
     }
 }

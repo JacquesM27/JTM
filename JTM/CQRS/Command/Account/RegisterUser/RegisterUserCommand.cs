@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace JTM.CQRS.Command.Account.RegisterUser
+namespace JTM.CQRS.Command.Account
 {
     public record RegisterUserCommand : IRequest
     {

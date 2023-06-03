@@ -1,12 +1,12 @@
 ﻿using JTM.Data;
-using JTM.DTO.Account;
+using JTM.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlTypes;
 
-namespace JTM.CQRS.Command.Account.BanUser
+namespace JTM.CQRS.Command.Account
 {
-    public class BanUserCommandHandler : IRequestHandler<BanUserCommand, AuthResponseDto>
+    public class BanUserCommandHandler : IRequestHandler<BanUserCommand>
     {
         private readonly DataContext _dataContext;
 
@@ -15,20 +15,15 @@ namespace JTM.CQRS.Command.Account.BanUser
             _dataContext = dataContext;
         }
 
-        public async Task<AuthResponseDto> Handle(BanUserCommand request, CancellationToken cancellationToken)
+        public async Task Handle(BanUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _dataContext.Users
-                 .SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
-
-            if (user is null)
-            {
-                return new AuthResponseDto { Message = "User not found." };
-            }
+                 .SingleOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken)
+                 ?? throw new AuthException("User not found.");
 
             user.Banned = true;
             user.TokenExpires = (DateTime)SqlDateTime.MinValue;
             await _dataContext.SaveChangesAsync(cancellationToken);
-            return new AuthResponseDto { Success = true };
         }
     }
 }

@@ -1,14 +1,13 @@
-﻿using JTM.DTO.Account;
-using MediatR;
+﻿using MediatR;
 
-namespace JTM.CQRS.Command.Account.ConfirmAccountUser
+namespace JTM.CQRS.Command.Account
 {
-    public record ConfirmAccountCommand : IRequest<AuthResponseDto>
+    public record ConfirmAccountCommand : IRequest
     {
         public int UserId { get; init; }
-        public string? Token { get; init; }
+        public string Token { get; init; }
 
-        public ConfirmAccountCommand(int userId, string? token)
+        public ConfirmAccountCommand(int userId, string token)
         {
             UserId = userId;
             Token = token;

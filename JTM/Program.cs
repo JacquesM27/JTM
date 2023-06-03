@@ -1,11 +1,10 @@
 global using JTM.Model;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using JTM.Data;
 using JTM.DTO.Account.RegisterUser;
 using JTM.Middleware;
-using JTM.Services.AuthService;
 using JTM.Services.RabbitService;
+using JTM.Services.TokenService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

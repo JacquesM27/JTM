@@ -1,11 +1,12 @@
 ﻿using JTM.Data;
 using JTM.DTO.Account;
+using JTM.Exceptions;
 using JTM.Helper.PasswordHelper;
 using JTM.Services.TokenService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JTM.CQRS.Command.Account.LoginUser
+namespace JTM.CQRS.Command.Account
 {
     public class LoginUserCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
     {
@@ -24,32 +25,21 @@ namespace JTM.CQRS.Command.Account.LoginUser
                 .SingleOrDefaultAsync(u => u.Email == request.Email, cancellationToken: cancellationToken);
 
             if (user is null)
-            {
-                return new AuthResponseDto { Message = "User not found." };
-            }
+                throw new AuthException("User not found.");
             else if (user.Banned)
-            {
-                return new AuthResponseDto { Message = "Account banned." };
-            }
+                throw new AuthException("Account blocked.");
             else if (user.EmailConfirmed is false)
-            {
-                return new AuthResponseDto { Message = "Account not activated." };
-            }
+                throw new AuthException("Account not activated.");
             else if (!PasswordHelper.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-            {
-                return new AuthResponseDto { Message = "Wrong password." };
-            }
+                throw new AuthException("Wrong password.");
 
             string token = _tokenService.CreateToken(user);
             var refreshToken = _tokenService.CreateRefreshToken();
             await _tokenService.SetRefreshToken(refreshToken, user);
-            return new AuthResponseDto
-            {
-                Success = true,
-                Token = token,
-                RefreshToken = refreshToken.Token,
-                TokenExpires = refreshToken.Expires
-            };
+            return new AuthResponseDto(
+                token: token,
+                refreshToken: refreshToken.Token,
+                tokenExpires: refreshToken.Expires);
         }
     }
 }

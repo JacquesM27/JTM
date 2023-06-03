@@ -2,11 +2,11 @@
 
 namespace JTM.CQRS.Command.Account
 {
-    public record ForgetPasswordCommand : IRequest
+    public record RefreshConfirmTokenCommand : IRequest
     {
         public string Email { get; init; }
 
-        public ForgetPasswordCommand(string email)
+        public RefreshConfirmTokenCommand(string email)
         {
             Email = email;
         }

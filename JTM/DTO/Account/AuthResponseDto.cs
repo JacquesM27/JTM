@@ -1,11 +1,16 @@
 ﻿namespace JTM.DTO.Account
 {
-    public class AuthResponseDto
-    {
-        public bool Success { get; set; } = false;
-        public string Message { get; set; } = string.Empty;
-        public string Token { get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty;
-        public DateTime TokenExpires { get; set; }
+    public record AuthResponseDto
+    { 
+        public string Token { get; init; }
+        public string RefreshToken { get; init; }
+        public DateTime TokenExpires { get; init; }
+
+        public AuthResponseDto(string token, string refreshToken, DateTime tokenExpires)
+        {
+            Token = token;
+            RefreshToken = refreshToken;
+            TokenExpires = tokenExpires;
+        }
     }
 }

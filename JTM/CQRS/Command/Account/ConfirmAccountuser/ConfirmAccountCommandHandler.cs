@@ -1,11 +1,11 @@
 ﻿using JTM.Data;
-using JTM.DTO.Account;
+using JTM.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace JTM.CQRS.Command.Account.ConfirmAccountUser
+namespace JTM.CQRS.Command.Account
 {
-    public class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand, AuthResponseDto>
+    public class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand>
     {
         private readonly DataContext _dataContext;
 
@@ -14,34 +14,23 @@ namespace JTM.CQRS.Command.Account.ConfirmAccountUser
             _dataContext = dataContext;
         }
 
-        public async Task<AuthResponseDto> Handle(ConfirmAccountCommand request, CancellationToken cancellationToken)
+        public async Task Handle(ConfirmAccountCommand request, CancellationToken cancellationToken)
         {
             var user = await _dataContext.Users
-                .SingleOrDefaultAsync(c => c.Id == request.UserId);
+                .SingleOrDefaultAsync(c => c.Id == request.UserId, cancellationToken);
+
             if (user is null)
-            {
-                return new AuthResponseDto { Message = "Invalid user." };
-            }
+                throw new AuthException("Invalid user.");
             else if (user.EmailConfirmed)
-            {
-                return new AuthResponseDto { Message = "User already confirmed." };
-            }
+                throw new AuthException("User already confirmed.");
             else if (user.ActivationTokenExpires < DateTime.UtcNow)
-            {
-                return new AuthResponseDto { Message = "Token expired." };
-            }
+                throw new AuthException("Token expired.");
             else if (!request.Token!.Equals(user.ActivationToken))
-            {
-                return new AuthResponseDto { Message = "Invalid token." };
-            }
+                throw new AuthException("Invalid token.");
 
             user.EmailConfirmed = true;
             user.ActivationToken = null;
-            await _dataContext.SaveChangesAsync();
-            return new AuthResponseDto()
-            {
-                Success = true,
-            };
+            await _dataContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

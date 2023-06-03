@@ -1,9 +1,8 @@
-﻿using JTM.DTO.Account;
-using MediatR;
+﻿using MediatR;
 
-namespace JTM.CQRS.Command.Account.BanUser
+namespace JTM.CQRS.Command.Account
 {
-    public record BanUserCommand : IRequest<AuthResponseDto>
+    public record BanUserCommand : IRequest
     {
         public int UserId { get; init; }
 
