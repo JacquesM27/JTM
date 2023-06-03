@@ -33,7 +33,6 @@ namespace JTM.Controllers
                 userName: request.UserName,
                 email: request.Email,
                 password: request.Password);
-
             await _mediator.Send(command);
             return Ok();
         }
@@ -45,7 +44,6 @@ namespace JTM.Controllers
             var command = new LoginCommand(
               email: userDto.Email,
               password: userDto.Password);
-
             var response = await _mediator.Send(command);
             return Ok(response);
         }
@@ -54,7 +52,6 @@ namespace JTM.Controllers
         public async Task<ActionResult<AuthResponseDto>> RefreshToken()
         {
             var command = new RefreshTokenCommand();
-
             var response = await _mediator.Send(command);
             return Ok(response);
         }
@@ -63,9 +60,7 @@ namespace JTM.Controllers
         [Route("forget-password")]
         public async Task<ActionResult> ForgetPassword(string email)
         {
-            var command = new ForgetPasswordCommand(
-                email: email);
-
+            var command = new ForgetPasswordCommand(email: email);
             await _mediator.Send(command);
             return Ok();
         }
@@ -77,7 +72,6 @@ namespace JTM.Controllers
             var command = new ConfirmAccountCommand(
                 userId: userId,
                 token: token);
-
             await _mediator.Send(command);
             return Ok();
         }
@@ -86,9 +80,7 @@ namespace JTM.Controllers
         [Route("confirm-refresh")]
         public async Task<ActionResult<AuthResponseDto>> RefreshConfirmToken(string email)
         {
-            var command = new RefreshConfirmTokenCommand( 
-                email: email);
-
+            var command = new RefreshConfirmTokenCommand(email: email);
             await _mediator.Send(command);
             return Ok();
         }
@@ -101,7 +93,6 @@ namespace JTM.Controllers
                 userId: request.UserId,
                 password: request.Password,
                 token: request.Token);
-
             await _mediator.Send(command);
             return Ok();
         }
@@ -111,9 +102,7 @@ namespace JTM.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> BanUser(int userId)
         {
-            var command = new BanUserCommand(
-                userId: userId);
-            
+            var command = new BanUserCommand(userId: userId);
             await _mediator.Send(command);
             return Ok();
         }
