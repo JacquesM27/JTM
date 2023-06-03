@@ -40,7 +40,6 @@ namespace JTM.Controllers
             throw new NotImplementedException();
         }
 
-
         [HttpPut]
         public Task<ActionResult> UpdateWorkingTime(WorkingTimeDto request)
         {

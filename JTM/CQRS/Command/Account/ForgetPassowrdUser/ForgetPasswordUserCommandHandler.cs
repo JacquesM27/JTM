@@ -34,12 +34,10 @@ namespace JTM.CQRS.Command.Account
 
         private void SendResetPasswordMessage(User user)
         {
-            MessageDto message = new()
-            {
-                ReceiverEmail = user.Email,
-                ReceiverName = user.Username,
-                Url = $"https://localhost:7131/api/account/confirm/{user.Id}/{user.PasswordResetToken}"
-            };
+            MessageDto message = new(
+                receiverEmail: user.Email,
+                receiverName: user.Username,
+                url: $"https://localhost:7131/api/account/confirm/{user.Id}/{user.PasswordResetToken}");
 
             _rabbitService.SendMessage(Enum.MessageQueueType.PasswordRemind, message);
         }

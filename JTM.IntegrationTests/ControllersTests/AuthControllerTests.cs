@@ -7,6 +7,7 @@ using JTM.DTO.Account.RegisterUser;
 using JTM.IntegrationTests.Helpers;
 using JTM.Services.AuthService;
 using JTM.Services.RabbitService;
+using JTM.Services.TokenService;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;

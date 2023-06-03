@@ -38,12 +38,10 @@ namespace JTM.CQRS.Command.Account
 
         private void SendActivationMessage(User user)
         {
-            MessageDto message = new()
-            {
-                ReceiverEmail = user.Email,
-                ReceiverName = user.Username,
-                Url = $"https://localhost:7131/api/account/confirm/{user.Id}/{user.ActivationToken}"
-            };
+            MessageDto message = new(
+                receiverEmail: user.Email,
+                receiverName: user.Username,
+                url: $"https://localhost:7131/api/account/confirm/{user.Id}/{user.ActivationToken}");
 
             _rabbitService.SendMessage(Enum.MessageQueueType.AccountActivate, message);
         }
