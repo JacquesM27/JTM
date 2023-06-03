@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class LoginUserCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
+    public sealed class LoginUserCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
     {
         private readonly DataContext _dataContext;
         private readonly ITokenService _tokenService;

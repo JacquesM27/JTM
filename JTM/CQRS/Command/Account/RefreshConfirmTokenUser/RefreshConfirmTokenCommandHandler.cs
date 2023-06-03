@@ -8,7 +8,7 @@ using JTM.Exceptions;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class RefreshConfirmTokenCommandHandler : IRequestHandler<RefreshConfirmTokenCommand>
+    public sealed class RefreshConfirmTokenCommandHandler : IRequestHandler<RefreshConfirmTokenCommand>
     {
         private readonly DataContext _dataContext;
         private readonly IRabbitService _rabbitService;

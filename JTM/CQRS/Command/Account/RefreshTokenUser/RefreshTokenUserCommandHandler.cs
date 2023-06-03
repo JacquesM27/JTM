@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class RefreshTokenUserCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponseDto>
+    public sealed class RefreshTokenUserCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponseDto>
     {
         private readonly DataContext _dataContext;
         private readonly IHttpContextAccessor _httpContextAccessor;

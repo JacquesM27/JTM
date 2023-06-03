@@ -6,7 +6,7 @@ using System.Data.SqlTypes;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class BanUserCommandHandler : IRequestHandler<BanUserCommand>
+    public sealed class BanUserCommandHandler : IRequestHandler<BanUserCommand>
     {
         private readonly DataContext _dataContext;
 

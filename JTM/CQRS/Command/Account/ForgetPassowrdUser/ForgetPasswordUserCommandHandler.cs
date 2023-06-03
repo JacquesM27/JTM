@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class ForgetPasswordUserCommandHandler : IRequestHandler<ForgetPasswordCommand>
+    public sealed class ForgetPasswordUserCommandHandler : IRequestHandler<ForgetPasswordCommand>
     {
         private readonly DataContext _dataContext;
         private readonly IRabbitService _rabbitService;

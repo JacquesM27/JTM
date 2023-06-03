@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand>
+    public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand>
     {
         private readonly DataContext _dataContext;
 

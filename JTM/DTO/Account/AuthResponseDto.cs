@@ -1,6 +1,6 @@
 ﻿namespace JTM.DTO.Account
 {
-    public sealed record AuthResponseDto
+    public record AuthResponseDto
     { 
         public string Token { get; init; }
         public string RefreshToken { get; init; }

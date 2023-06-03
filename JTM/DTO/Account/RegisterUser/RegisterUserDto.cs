@@ -1,6 +1,6 @@
 ﻿namespace JTM.DTO.Account.RegisterUser
 {
-    public sealed record RegisterUserDto
+    public record RegisterUserDto
     {
         public string UserName { get; init; }
         public string Email { get; init; }

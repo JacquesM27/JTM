@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand>
+    public sealed class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand>
     {
         private readonly DataContext _dataContext;
 

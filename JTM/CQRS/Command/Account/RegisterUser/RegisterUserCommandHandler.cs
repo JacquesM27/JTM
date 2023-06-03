@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 
 namespace JTM.CQRS.Command.Account
 {
-    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
+    public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
     {
         private readonly DataContext _dataContext;
         private readonly IRabbitService _rabbitService;
