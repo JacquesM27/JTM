@@ -19,8 +19,8 @@ namespace JTM.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<DetailsWorkingTimeDto>> GetWorkingTime(int workingTimeId)
+        [HttpGet("{workingTimeId}")]
+        public async Task<ActionResult<DetailsWorkingTimeDto>> GetWorkingTime([FromRoute]int workingTimeId)
         {
             var query = new GetWorkingTimeQuery(workingTimeId);
             var response = await _mediator.Send(query);
