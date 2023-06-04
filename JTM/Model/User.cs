@@ -18,6 +18,8 @@
         public DateTime PasswordTokenExpires { get; set; }
         public bool Banned { get; set; } = false;
 
-        public List<WorkingTime> WorkingTimes { get; set; }
+        public virtual ICollection<WorkingTime> WorkingTimes { get; set; }
+        public virtual ICollection<WorkingTime> AuthorOfWorkingTimes { get; set; }
+        public virtual ICollection<WorkingTime> LastEditorOfWorkingTimes { get; set; }
     }
 }

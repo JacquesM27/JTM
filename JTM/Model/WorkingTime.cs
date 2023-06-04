@@ -11,20 +11,21 @@ namespace JTM.Model
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool Deleted { get; set; }
 
+
+        public int? CompanyId { get; set; }
+        [ForeignKey(nameof(CompanyId))]
+        public Company? Company { get; set; }
+
         public int EmployeeId { get; set; }
         [ForeignKey(nameof(EmployeeId))]
         public User Employee { get; set; }
 
-        public int? CompanyId { get; set; }
-        [ForeignKey(nameof(CompanyId))]
-        public Company Company { get; set; }
-
         public int AuthorId { get; set; }
         [ForeignKey(nameof(AuthorId))]
-        public User Author { get; set; }
+        public virtual User Author { get; set; }
 
         public int LastEditorId { get; set; }
         [ForeignKey(nameof(LastEditorId))]
-        public User LastEditor { get; set; }
+        public virtual User LastEditor { get; set; }
     }
 }
