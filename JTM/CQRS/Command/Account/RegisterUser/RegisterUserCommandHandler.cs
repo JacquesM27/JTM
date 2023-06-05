@@ -57,12 +57,12 @@ namespace JTM.CQRS.Command.Account
         {
             if (await _dataContext.Users.AnyAsync(c => c.Email == email))
             {
-                throw new ValidationException("Email address is busy", 
+                throw new ValidationException("Email address is busy.", 
                     new List<ValidationFailure> 
                     {
                         new ValidationFailure() 
                         {
-                            PropertyName = "Email", ErrorMessage = "Email address is busy" 
+                            PropertyName = "Email", ErrorMessage = "Email address is busy." 
                         } 
                     });
             }

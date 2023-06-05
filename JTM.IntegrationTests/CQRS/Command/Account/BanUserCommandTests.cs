@@ -19,7 +19,7 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         }
 
         [Fact]
-        public async Task BanUser_ForNotExistingUser_ShouldThrowsAuthExceptionAsync()
+        public async Task BanUser_ForNotExistingUser_ShouldThrowsAuthExceptionWithUserNotFoundMessageAsync()
         {
             // Arrange
             var command = new BanUserCommand(0);
@@ -29,14 +29,31 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
             async Task HandleCommand() => await commandHandler.Handle(command, default);
 
             // Assert
-            await Assert.ThrowsAnyAsync<AuthException>(HandleCommand);
+            var exception = await Assert.ThrowsAnyAsync<AuthException>(HandleCommand);
+            Assert.Equal("User not found.", exception.Message);
         }
 
         [Fact]
         public async Task BanUser_ForValidUser_ShouldBanUserAsync()
         {
             // Arrange
-            var tmpUser = await _dataContext.Users.AddAsync(new User() { Email = "test", Banned = false });
+            var tmpUser = await _dataContext.Users.AddAsync(new User());
+            await _dataContext.SaveChangesAsync();
+            var command = new BanUserCommand(tmpUser.Entity.Id);
+            var commandHandler = new BanUserCommandHandler(_dataContext);
+
+            // Act
+            await commandHandler.Handle(command, default);
+
+            // Assert
+            Assert.True(tmpUser.Entity.Banned);
+        }
+
+        [Fact]
+        public async Task BanUser_ForBannedUser_ShouldKeepBanUserAsync()
+        {
+            // Arrange
+            var tmpUser = await _dataContext.Users.AddAsync(new User() { Banned = true});
             await _dataContext.SaveChangesAsync();
             var command = new BanUserCommand(tmpUser.Entity.Id);
             var commandHandler = new BanUserCommandHandler(_dataContext);

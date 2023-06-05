@@ -42,7 +42,6 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
             // Arrange
             var tmpUser = await _dataContext.Users.AddAsync(new User()
             {
-                Email = "test",
                 PasswordTokenExpires = (DateTime)SqlDateTime.MinValue
             });
             await _dataContext.SaveChangesAsync();
@@ -63,12 +62,11 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
             // Arrange
             var tmpUser = await _dataContext.Users.AddAsync(new User()
             {
-                Email = "test",
-                PasswordTokenExpires = DateTime.Now.AddHours(1),
-                PasswordResetToken = "123"
-            });
+                PasswordTokenExpires = DateTime.Now.AddHours(-1),
+                PasswordResetToken = Guid.NewGuid().ToString()
+        });
             await _dataContext.SaveChangesAsync();
-            var command = new ChangePasswordCommand(tmpUser.Entity.Id, It.IsAny<string>(), "");
+            var command = new ChangePasswordCommand(tmpUser.Entity.Id, It.IsAny<string>(), Guid.NewGuid().ToString());
             var commandHandler = new ChangePasswordCommandHandler(_dataContext);
 
             // Act
@@ -83,11 +81,10 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task ChangePassword_ForValidData_ShouldResetPasswordAsync()
         {
             // Arrange
-            string tmpToken = "123";
-            string password = "test";   
+            string tmpToken = Guid.NewGuid().ToString();
+            string password = Guid.NewGuid().ToString();
             var tmpUser = await _dataContext.Users.AddAsync(new User()
             {
-                Email = "test",
                 PasswordTokenExpires = DateTime.Now.AddHours(1),
                 PasswordResetToken = tmpToken
             });
