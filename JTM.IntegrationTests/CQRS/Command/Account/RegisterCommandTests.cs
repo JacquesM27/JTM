@@ -64,11 +64,11 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task Register_ForValidData_ShouldCreateUserAsync()
         {
             // Arrange
+            _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
             var command = new RegisterUserCommand(
                     userName: "test",
                     email: "test",
                     password: "123");
-            _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
             var commandHandler = new RegisterUserCommandHandler(_dataContext, _mockRabbitService.Object);
 
             // Act
@@ -82,11 +82,11 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task Register_ForBusyEmail_ShouldThrowsAuthExceptionAsync()
         {
             // Arrange
+            _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
             var command = new RegisterUserCommand(
                     userName: "test",
                     email: "test",
                     password: "123");
-            _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
             var commandHandler = new RegisterUserCommandHandler(_dataContext, _mockRabbitService.Object);
 
             // Act

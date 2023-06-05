@@ -8,15 +8,14 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
 {
     public class BanUserCommandTests
     {
-        private readonly DbContextOptions<DataContext> _contextOptions;
         private readonly DataContext _dataContext;
 
         public BanUserCommandTests()
         {
-            _contextOptions = new DbContextOptionsBuilder<DataContext>()
+            DbContextOptions<DataContext> contextOptions = new DbContextOptionsBuilder<DataContext>()
                .UseInMemoryDatabase(databaseName: "InMemory_JTM")
                .Options;
-            _dataContext = new DataContext(_contextOptions);
+            _dataContext = new DataContext(contextOptions);
         }
 
         [Fact]
@@ -34,15 +33,15 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         }
 
         [Fact]
-        public async Task BanUser_ForValidUser_ShouldBanUser()
+        public async Task BanUser_ForValidUser_ShouldBanUserAsync()
         {
             // Arrange
-            var commandHandler = new BanUserCommandHandler(_dataContext);
-
-            // Act
             var tmpUser = await _dataContext.Users.AddAsync(new User() { Email = "test", Banned = false });
             await _dataContext.SaveChangesAsync();
             var command = new BanUserCommand(tmpUser.Entity.Id);
+            var commandHandler = new BanUserCommandHandler(_dataContext);
+
+            // Act
             await commandHandler.Handle(command, default);
 
             // Assert
