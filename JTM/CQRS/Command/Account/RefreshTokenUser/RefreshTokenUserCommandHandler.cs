@@ -1,33 +1,33 @@
-﻿using JTM.Data;
+﻿using JTM.Data.Model;
+using JTM.Data.UnitOfWork;
 using JTM.DTO.Account;
 using JTM.Exceptions;
 using JTM.Services.TokenService;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace JTM.CQRS.Command.Account
 {
     public sealed class RefreshTokenUserCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponseDto>
     {
-        private readonly DataContext _dataContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenService;
 
         public RefreshTokenUserCommandHandler(
-            DataContext dataContext,
-            IHttpContextAccessor httpContextAccessor,
+            IUnitOfWork unitOfWork,
             ITokenService tokenService)
         {
-            _dataContext = dataContext;
-            _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
             _tokenService = tokenService;
         }
 
         public async Task<AuthResponseDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
-            var user = await _dataContext.Users
-                .SingleOrDefaultAsync(c => c.RefreshToken == refreshToken, cancellationToken);
+            if (request.RefreshToken is null)
+                throw new AuthException("Missing token.");
+
+            Expression<Func<User, bool>> filter = user => user.RefreshToken == request.RefreshToken;
+            var user = await _unitOfWork.UserRepository.QuerySingleAsync(filter);
 
             if (user is null)
                 throw new AuthException("Invalid user.");

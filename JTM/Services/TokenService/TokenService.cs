@@ -1,5 +1,6 @@
 ﻿using JTM.Data;
 using JTM.Data.Model;
+using JTM.Data.UnitOfWork;
 using JTM.DTO.Account;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,13 +11,13 @@ namespace JTM.Services.TokenService
 {
     public class TokenService : ITokenService
     {
-        private readonly DataContext _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TokenService(DataContext dataContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public TokenService(IUnitOfWork unitOfWork, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -69,7 +70,7 @@ namespace JTM.Services.TokenService
             user.RefreshToken = refreshToken.Token;
             user.TokenCreated = refreshToken.Created;
             user.TokenExpires = refreshToken.Expires;
-            await _dataContext.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

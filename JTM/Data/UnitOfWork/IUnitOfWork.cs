@@ -6,6 +6,6 @@ namespace JTM.Data.UnitOfWork
     {
         IUserRepository UserRepository { get; }
 
-        Task SaveChanges();
+        Task SaveChangesAsync();
     }
 }

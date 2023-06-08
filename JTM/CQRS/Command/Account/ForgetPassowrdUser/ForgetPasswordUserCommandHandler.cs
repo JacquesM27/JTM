@@ -1,34 +1,34 @@
-﻿using JTM.Data;
-using JTM.Data.Model;
+﻿using JTM.Data.Model;
+using JTM.Data.UnitOfWork;
 using JTM.DTO.Account.RegisterUser;
 using JTM.Exceptions;
 using JTM.Services.RabbitService;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 
 namespace JTM.CQRS.Command.Account
 {
     public sealed class ForgetPasswordUserCommandHandler : IRequestHandler<ForgetPasswordCommand>
     {
-        private readonly DataContext _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRabbitService _rabbitService;
 
-        public ForgetPasswordUserCommandHandler(DataContext dataContext, IRabbitService rabbitService)
+        public ForgetPasswordUserCommandHandler(IUnitOfWork unitOfWork, IRabbitService rabbitService)
         {
-            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
             _rabbitService = rabbitService;
         }
 
         public async Task Handle(ForgetPasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users
-                .SingleOrDefaultAsync(c => c.Email.Equals(request.Email), cancellationToken)
+            Expression<Func<User, bool>> filter = user => user.Email == request.Email;
+            var user = await _unitOfWork.UserRepository.QuerySingleAsync(filter)
                 ?? throw new AuthException("Invalid user.");
 
             user.PasswordTokenExpires = DateTime.UtcNow.AddDays(1);
             user.PasswordResetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-            await _dataContext.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync();
 
             SendResetPasswordMessage(user);
         }

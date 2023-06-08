@@ -1,23 +1,21 @@
-﻿using JTM.Data;
+﻿using JTM.Data.UnitOfWork;
 using JTM.Exceptions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace JTM.CQRS.Command.Account
 {
     public sealed class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand>
     {
-        private readonly DataContext _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ConfirmAccountCommandHandler(DataContext dataContext)
+        public ConfirmAccountCommandHandler(IUnitOfWork unitOfWork)
         {
-            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task Handle(ConfirmAccountCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users
-                .SingleOrDefaultAsync(c => c.Id == request.UserId, cancellationToken);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId);
 
             if (user is null)
                 throw new AuthException("Invalid user.");
@@ -30,7 +28,8 @@ namespace JTM.CQRS.Command.Account
 
             user.EmailConfirmed = true;
             user.ActivationToken = null;
-            await _dataContext.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.UserRepository.UpdateAsync(user.Id, user);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -8,6 +8,9 @@ namespace JTM.Data.Repository
         Task<IEnumerable<TEntity>> QueryAsync(
             Expression<Func<TEntity, bool>>? filter = null,
             params Expression<Func<TEntity, object>>[] includeProperties);
+        Task<TEntity?> QuerySingleAsync(
+            Expression<Func<TEntity, bool>>? filter = null,
+            params Expression<Func<TEntity, object>>[] includeProperties);
         Task<TEntity?> GetByIdAsync(int id);
         Task<TEntity?> GetByIdAsync(int id, params Expression<Func<TEntity, object>>[] includeProperties);
         Task UpdateAsync(int id, TEntity entity);

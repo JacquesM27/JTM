@@ -4,6 +4,7 @@ using JTM.DTO.Account;
 using JTM.DTO.Account.RegisterUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JTM.Controllers
@@ -13,13 +14,16 @@ namespace JTM.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IValidator<RegisterUserDto> _validator;
 
         public AccountController(
             IMediator mediator,
+            IHttpContextAccessor httpContextAccessor,
             IValidator<RegisterUserDto> validator)
         {
             _mediator = mediator;
+            _httpContextAccessor = httpContextAccessor;
             _validator = validator;
         }
 
@@ -51,7 +55,8 @@ namespace JTM.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult<AuthResponseDto>> RefreshToken()
         {
-            var command = new RefreshTokenCommand();
+            var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
+            var command = new RefreshTokenCommand(refreshToken);
             var response = await _mediator.Send(command);
             return Ok(response);
         }

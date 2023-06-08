@@ -1,24 +1,22 @@
-﻿using JTM.Data;
+﻿using JTM.Data.UnitOfWork;
 using JTM.Exceptions;
 using JTM.Helper.PasswordHelper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace JTM.CQRS.Command.Account
 {
     public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand>
     {
-        private readonly DataContext _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ChangePasswordCommandHandler(DataContext dataContext)
+        public ChangePasswordCommandHandler(IUnitOfWork unitOfWork)
         {
-            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users
-                .SingleOrDefaultAsync(c => c.Id == request.UserId, cancellationToken: cancellationToken);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId);
 
             if (user is null)
                 throw new AuthException("Invalid user.");
@@ -32,7 +30,8 @@ namespace JTM.CQRS.Command.Account
             user.PasswordSalt = passwordSalt;
             user.PasswordResetToken = null;
 
-            await _dataContext.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.UserRepository.UpdateAsync(user.Id, user);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

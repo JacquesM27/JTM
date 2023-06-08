@@ -66,6 +66,20 @@ namespace JTM.Data.Repository
             return await query.ToListAsync();
         }
 
+        public async Task<TEntity?> QuerySingleAsync(Expression<Func<TEntity, bool>>? filter = null, params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            IQueryable<TEntity> query = _context.Set<TEntity>();
+
+            if (filter is not null)
+                query = query.Where(filter);
+
+            query = includeProperties.Aggregate(
+                query,
+                (current, property) => current.Include(property));
+
+            return await query.FirstOrDefaultAsync();
+        }
+
         public Task UpdateAsync(int id, TEntity entity)
         {
             _dbSet.Update(entity);

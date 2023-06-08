@@ -5,7 +5,7 @@ namespace JTM.Data.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DataContext _context;
-        private bool _disposed = false  ;
+        private bool _disposed;
 
         public UnitOfWork(DataContext context)
         {
@@ -39,9 +39,9 @@ namespace JTM.Data.UnitOfWork
 
         }
 
-        public async Task SaveChanges()
+        public async Task SaveChangesAsync()
         {
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -1,24 +1,24 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using JTM.Data;
 using JTM.Data.Model;
+using JTM.Data.UnitOfWork;
 using JTM.DTO.Account.RegisterUser;
 using JTM.Helper.PasswordHelper;
 using JTM.Services.RabbitService;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 
 namespace JTM.CQRS.Command.Account
 {
     public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
     {
-        private readonly DataContext _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRabbitService _rabbitService;
 
-        public RegisterUserCommandHandler(DataContext dataContext, IRabbitService rabbitService)
+        public RegisterUserCommandHandler(IUnitOfWork unitOfWork, IRabbitService rabbitService)
         {
-            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
             _rabbitService = rabbitService;
         }
 
@@ -39,8 +39,8 @@ namespace JTM.CQRS.Command.Account
                 PasswordResetToken = null
             };
 
-            await _dataContext.AddAsync(newUser, cancellationToken);
-            await _dataContext.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.UserRepository.AddAsync(newUser);
+            await _unitOfWork.SaveChangesAsync();
             SendActivationMessage(newUser);
         }
 
@@ -56,7 +56,9 @@ namespace JTM.CQRS.Command.Account
 
         private async Task CheckEmailUniqueness(string email)
         {
-            if (await _dataContext.Users.AnyAsync(c => c.Email == email))
+            Expression<Func<User, bool>> filter = user => user.Email == email;
+            var user = await _unitOfWork.UserRepository.QuerySingleAsync(filter);
+            if (user is not null)
             {
                 throw new ValidationException("Email address is busy.", 
                     new List<ValidationFailure> 

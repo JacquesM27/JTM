@@ -1,31 +1,32 @@
-﻿using JTM.Data;
+﻿using JTM.Data.Model;
+using JTM.Data.UnitOfWork;
 using JTM.DTO.Account;
 using JTM.Exceptions;
 using JTM.Helper.PasswordHelper;
 using JTM.Services.TokenService;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace JTM.CQRS.Command.Account
 {
     public sealed class LoginUserCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
     {
-        private readonly DataContext _dataContext;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenService;
 
-        public LoginUserCommandHandler(DataContext dataContext, ITokenService authService)
+        public LoginUserCommandHandler(IUnitOfWork unitOfWork, ITokenService authService)
         {
-            _dataContext = dataContext;
+            _unitOfWork = unitOfWork;
             _tokenService = authService;
         }
 
         public async Task<AuthResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dataContext.Users
-                .SingleOrDefaultAsync(u => u.Email == request.Email, cancellationToken: cancellationToken);
+            Expression<Func<User, bool>> filter = user => user.Email == request.Email;
+            var user = await _unitOfWork.UserRepository.QuerySingleAsync(filter);
 
             if (user is null)
-                throw new AuthException("User not found.");
+                throw new AuthException("Invalid user.");
             else if (user.Banned)
                 throw new AuthException("Account blocked.");
             else if (user.EmailConfirmed is false)
