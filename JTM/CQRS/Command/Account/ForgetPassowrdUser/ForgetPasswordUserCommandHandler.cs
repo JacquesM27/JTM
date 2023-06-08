@@ -1,4 +1,5 @@
 ﻿using JTM.Data;
+using JTM.Data.Model;
 using JTM.DTO.Account.RegisterUser;
 using JTM.Exceptions;
 using JTM.Services.RabbitService;

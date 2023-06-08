@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using JTM.Exceptions;
+using JTM.Data.Model;
 
 namespace JTM.CQRS.Command.Account
 {

@@ -1,6 +1,6 @@
-﻿namespace JTM.Model
+﻿namespace JTM.DTO.Account
 {
-    public class RefreshToken
+    public class RefreshTokenDto
     {
         public string Token { get; set; } = string.Empty;
         public DateTime Created { get; set; }

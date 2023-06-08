@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JTM.Model
+namespace JTM.Data.Model
 {
-    public class WorkingTime
+    public class WorkingTime : IEntityBase
     {
         public int Id { get; set; }
         public DateTime StartOdWorkingDate { get; set; }
@@ -11,21 +11,16 @@ namespace JTM.Model
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public bool Deleted { get; set; }
 
-
         public int? CompanyId { get; set; }
-        [ForeignKey(nameof(CompanyId))]
         public Company? Company { get; set; }
 
         public int EmployeeId { get; set; }
-        [ForeignKey(nameof(EmployeeId))]
         public User Employee { get; set; }
 
         public int AuthorId { get; set; }
-        [ForeignKey(nameof(AuthorId))]
         public virtual User Author { get; set; }
 
         public int LastEditorId { get; set; }
-        [ForeignKey(nameof(LastEditorId))]
         public virtual User LastEditor { get; set; }
     }
 }

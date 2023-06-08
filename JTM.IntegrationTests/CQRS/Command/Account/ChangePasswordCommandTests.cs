@@ -2,7 +2,7 @@
 using JTM.Data;
 using JTM.Exceptions;
 using JTM.Helper.PasswordHelper;
-using JTM.Model;
+using JTM.Data.Model;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Data.SqlTypes;
@@ -64,7 +64,7 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
             {
                 PasswordTokenExpires = DateTime.Now.AddHours(-1),
                 PasswordResetToken = Guid.NewGuid().ToString()
-        });
+            });
             await _dataContext.SaveChangesAsync();
             var command = new ChangePasswordCommand(tmpUser.Entity.Id, It.IsAny<string>(), Guid.NewGuid().ToString());
             var commandHandler = new ChangePasswordCommandHandler(_dataContext);

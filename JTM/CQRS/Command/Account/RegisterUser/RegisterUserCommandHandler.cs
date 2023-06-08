@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using JTM.Data;
+using JTM.Data.Model;
 using JTM.DTO.Account.RegisterUser;
 using JTM.Helper.PasswordHelper;
 using JTM.Services.RabbitService;

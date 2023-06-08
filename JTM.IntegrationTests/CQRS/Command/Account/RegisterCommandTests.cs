@@ -3,7 +3,7 @@ using JTM.CQRS.Command.Account;
 using JTM.Data;
 using JTM.DTO.Account.RegisterUser;
 using JTM.Enum;
-using JTM.Model;
+using JTM.Data.Model;
 using JTM.Services.RabbitService;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

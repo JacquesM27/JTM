@@ -1,6 +1,6 @@
-﻿namespace JTM.Model
+﻿namespace JTM.Data.Model
 {
-    public class User
+    public class User : IEntityBase
     {
         public int Id { get; set; }
         public string Email { get; set; } = string.Empty;

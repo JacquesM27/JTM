@@ -1,9 +1,12 @@
-﻿namespace JTM.Services.TokenService
+﻿using JTM.Data.Model;
+using JTM.DTO.Account;
+
+namespace JTM.Services.TokenService
 {
     public interface ITokenService
     {
         string CreateToken(User user);
-        RefreshToken CreateRefreshToken();
-        Task SetRefreshToken(RefreshToken refreshToken, User user);
+        RefreshTokenDto CreateRefreshToken();
+        Task SetRefreshToken(RefreshTokenDto refreshToken, User user);
     }
 }

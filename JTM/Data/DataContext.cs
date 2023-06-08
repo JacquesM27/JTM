@@ -1,4 +1,4 @@
-﻿using JTM.Model;
+﻿using JTM.Data.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace JTM.Data

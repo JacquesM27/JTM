@@ -1,6 +1,6 @@
-global using JTM.Model;
 using FluentValidation;
 using JTM.Data;
+using JTM.Data.UnitOfWork;
 using JTM.DTO.Account.RegisterUser;
 using JTM.Middleware;
 using JTM.Services.RabbitService;
@@ -50,6 +50,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.G
 
 builder.Services.AddSingleton<IRabbitService, RabbitService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddHttpContextAccessor();
 

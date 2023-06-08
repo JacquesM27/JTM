@@ -1,4 +1,6 @@
 ﻿using JTM.Data;
+using JTM.Data.Model;
+using JTM.DTO.Account;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -44,9 +46,9 @@ namespace JTM.Services.TokenService
             return jwt;
         }
 
-        public RefreshToken CreateRefreshToken()
+        public RefreshTokenDto CreateRefreshToken()
         {
-            var refreshToken = new RefreshToken()
+            var refreshToken = new RefreshTokenDto()
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 Expires = DateTime.UtcNow.AddDays(7),
@@ -55,7 +57,7 @@ namespace JTM.Services.TokenService
             return refreshToken;
         }
 
-        public async Task SetRefreshToken(RefreshToken refreshToken, User user)
+        public async Task SetRefreshToken(RefreshTokenDto refreshToken, User user)
         {
             var cookieOptions = new CookieOptions
             {
