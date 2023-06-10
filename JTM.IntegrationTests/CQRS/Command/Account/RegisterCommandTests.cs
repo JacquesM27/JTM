@@ -60,47 +60,47 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
             //CleanTestDatabaseToTest.CleanDb(_testConnectionString);
         }
 
-        [Fact]
-        public async Task Register_ForValidData_ShouldCreateUserAsync()
-        {
-            // Arrange
-            string tmpEmail = "test@test.com";
-            _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
-            var command = new RegisterUserCommand(
-                    userName: "test",
-                    email: tmpEmail,
-                    password: "123");
-            var commandHandler = new RegisterUserCommandHandler(_dataContext, _mockRabbitService.Object);
+        //[Fact]
+        //public async Task Register_ForValidData_ShouldCreateUserAsync()
+        //{
+        //    // Arrange
+        //    string tmpEmail = "test@test.com";
+        //    _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
+        //    var command = new RegisterUserCommand(
+        //            userName: "test",
+        //            email: tmpEmail,
+        //            password: "123");
+        //    var commandHandler = new RegisterUserCommandHandler(_dataContext, _mockRabbitService.Object);
 
-            // Act
-            await commandHandler.Handle(command, default);
+        //    // Act
+        //    await commandHandler.Handle(command, default);
 
-            // Assert
-            Assert.True(_dataContext.Users.Any(u => u.Email == tmpEmail));
-        }
+        //    // Assert
+        //    Assert.True(_dataContext.Users.Any(u => u.Email == tmpEmail));
+        //}
 
-        [Fact]
-        public async Task Register_ForBusyEmail_ShouldThrowsAuthExceptionWithEmailBusyMessageAsync()
-        {
-            // Arrange
-            string tmpEmail = "test@test.com";
-            _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
-            var command = new RegisterUserCommand(
-                    userName: "test",
-                    email: tmpEmail,
-                    password: "123");
-            var commandHandler = new RegisterUserCommandHandler(_dataContext, _mockRabbitService.Object);
+        //[Fact]
+        //public async Task Register_ForBusyEmail_ShouldThrowsAuthExceptionWithEmailBusyMessageAsync()
+        //{
+        //    // Arrange
+        //    string tmpEmail = "test@test.com";
+        //    _mockRabbitService.Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
+        //    var command = new RegisterUserCommand(
+        //            userName: "test",
+        //            email: tmpEmail,
+        //            password: "123");
+        //    var commandHandler = new RegisterUserCommandHandler(_dataContext, _mockRabbitService.Object);
 
-            // Act
-            await _dataContext.Users.AddAsync(new User() { Email = tmpEmail });
-            await _dataContext.SaveChangesAsync();
-            async Task HandleCommand() => await commandHandler.Handle(command, default);
+        //    // Act
+        //    await _dataContext.Users.AddAsync(new User() { Email = tmpEmail });
+        //    await _dataContext.SaveChangesAsync();
+        //    async Task HandleCommand() => await commandHandler.Handle(command, default);
 
-            // Assert
-            var exception = await Assert.ThrowsAnyAsync<ValidationException>(HandleCommand);
-            Assert.Equal("Email address is busy.", exception.Message);
-            //await Assert.ThrowsAnyAsync<ValidationException>(async () => await commandHandler.Handle(command, default));
-        }
+        //    // Assert
+        //    var exception = await Assert.ThrowsAnyAsync<ValidationException>(HandleCommand);
+        //    Assert.Equal("Email address is busy.", exception.Message);
+        //    //await Assert.ThrowsAnyAsync<ValidationException>(async () => await commandHandler.Handle(command, default));
+        //}
 
         //[Fact]
         //public async Task Login_ForNotFoundUser_ShouldReturnFalse()

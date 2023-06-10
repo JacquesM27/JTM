@@ -5,27 +5,22 @@ using JTM.Data.Model;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Linq.Expressions;
+using System.Data.SqlTypes;
 
 namespace JTM.IntegrationTests.CQRS.Command.Account
 {
-    public class ConfirmAccountCommandTests
+    public class ConfirmAccountCommandTests : AccountTestsBase
     {
-        private readonly DataContext _dataContext;
-
-        public ConfirmAccountCommandTests()
-        {
-            DbContextOptions<DataContext> contextOptions = new DbContextOptionsBuilder<DataContext>()
-              .UseInMemoryDatabase(databaseName: "InMemory_JTM")
-              .Options;
-            _dataContext = new DataContext(contextOptions);
-        }
-
         [Fact]
         public async Task ConfirmAccount_ForNotExistingUser_ShouldThrowAuthExceptionWithInvalidUserMessageAsync()
         {
             // Arrange
+            _mockUnitOfWork
+                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
+                .Returns(Task.FromResult<User?>(null));
+
             var command = new ConfirmAccountCommand(It.IsAny<int>(), It.IsAny<string>());
-            var commandHandler = new ConfirmAccountCommandHandler(_dataContext);
+            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -39,13 +34,17 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task ConfirmAccount_ForAlreadyConfirmedUser_ShouldThrowAuthExceptionWithUserConfirmedMessageAsync()
         {
             // Arrange
-            var tmpUser = await _dataContext.Users.AddAsync(new User()
+            User tmpUser = new()
             {
-                EmailConfirmed = true,
-            });
-            await _dataContext.SaveChangesAsync();
-            var command = new ConfirmAccountCommand(tmpUser.Entity.Id, It.IsAny<string>());
-            var commandHandler = new ConfirmAccountCommandHandler(_dataContext);
+                Id = 1,
+                EmailConfirmed = true
+            };
+            _mockUnitOfWork
+                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
+                .Returns(Task.FromResult(tmpUser));
+
+            var command = new ConfirmAccountCommand(tmpUser.Id, It.IsAny<string>());
+            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -59,14 +58,18 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task ConfirmAccount_ForTokenExpired_ShouldThrowAuthExceptionWithTokenExpiredMessageAsync()
         {
             // Arrange
-            var tmpUser = await _dataContext.Users.AddAsync(new User()
+            User tmpUser = new()
             {
+                Id = 1,
                 EmailConfirmed = false,
                 ActivationTokenExpires = DateTime.Now.AddHours(-1),
-            });
-            await _dataContext.SaveChangesAsync();
-            var command = new ConfirmAccountCommand(tmpUser.Entity.Id, It.IsAny<string>());
-            var commandHandler = new ConfirmAccountCommandHandler(_dataContext);
+            };
+            _mockUnitOfWork
+                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
+                .Returns(Task.FromResult(tmpUser));
+
+            var command = new ConfirmAccountCommand(tmpUser.Id, It.IsAny<string>());
+            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -81,15 +84,19 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         {
             // Arrange
             string tmpToken = Guid.NewGuid().ToString();
-            var tmpUser = await _dataContext.Users.AddAsync(new User()
+            User tmpUser = new()
             {
+                Id = 1,
                 EmailConfirmed = false,
                 ActivationTokenExpires = DateTime.Now.AddHours(1),
                 ActivationToken = tmpToken
-            });
-            await _dataContext.SaveChangesAsync();
-            var command = new ConfirmAccountCommand(tmpUser.Entity.Id, "");
-            var commandHandler = new ConfirmAccountCommandHandler(_dataContext);
+            };
+            _mockUnitOfWork
+                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
+                .Returns(Task.FromResult(tmpUser));
+
+            var command = new ConfirmAccountCommand(tmpUser.Id, string.Empty);
+            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -104,21 +111,25 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         {
             // Arrange
             string tmpToken = Guid.NewGuid().ToString();
-            var tmpUser = await _dataContext.Users.AddAsync(new User()
+            User tmpUser = new()
             {
+                Id = 1,
                 EmailConfirmed = false,
                 ActivationTokenExpires = DateTime.Now.AddHours(1),
                 ActivationToken = tmpToken
-            });
-            await _dataContext.SaveChangesAsync();
-            var command = new ConfirmAccountCommand(tmpUser.Entity.Id, tmpToken);
-            var commandHandler = new ConfirmAccountCommandHandler(_dataContext);
+            };
+            _mockUnitOfWork
+                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
+                .Returns(Task.FromResult(tmpUser));
+
+            var command = new ConfirmAccountCommand(tmpUser.Id, tmpToken);
+            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
 
             // Act
             await commandHandler.Handle(command, default);
 
             // Assert
-            Assert.True(tmpUser.Entity.EmailConfirmed);
+            Assert.True(tmpUser.EmailConfirmed);
         }
     }
 }
