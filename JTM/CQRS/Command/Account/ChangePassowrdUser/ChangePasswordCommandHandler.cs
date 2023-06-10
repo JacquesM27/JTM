@@ -22,6 +22,8 @@ namespace JTM.CQRS.Command.Account
                 throw new AuthException("Invalid user.");
             else if (user.PasswordTokenExpires < DateTime.UtcNow)
                 throw new AuthException("Token expires.");
+            else if (string.IsNullOrEmpty(request.Token))
+                throw new AuthException("Invalid token.");
             else if (!request.Token.Equals(user.PasswordResetToken))
                 throw new AuthException("Invalid token.");
 

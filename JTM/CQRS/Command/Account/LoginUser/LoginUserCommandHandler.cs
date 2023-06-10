@@ -37,6 +37,7 @@ namespace JTM.CQRS.Command.Account
             string token = _tokenService.CreateToken(user);
             var refreshToken = _tokenService.CreateRefreshToken();
             await _tokenService.SetRefreshToken(refreshToken, user);
+            await _unitOfWork.SaveChangesAsync();
             return new AuthResponseDto(
                 token: token,
                 refreshToken: refreshToken.Token,

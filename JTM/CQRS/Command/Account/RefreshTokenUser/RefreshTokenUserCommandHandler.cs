@@ -23,7 +23,7 @@ namespace JTM.CQRS.Command.Account
 
         public async Task<AuthResponseDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            if (request.RefreshToken is null)
+            if (string.IsNullOrEmpty(request.RefreshToken))
                 throw new AuthException("Missing token.");
 
             Expression<Func<User, bool>> filter = user => user.RefreshToken == request.RefreshToken;

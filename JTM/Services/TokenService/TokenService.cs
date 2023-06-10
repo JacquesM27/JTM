@@ -1,6 +1,4 @@
-﻿using JTM.Data;
-using JTM.Data.Model;
-using JTM.Data.UnitOfWork;
+﻿using JTM.Data.Model;
 using JTM.DTO.Account;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,13 +9,11 @@ namespace JTM.Services.TokenService
 {
     public class TokenService : ITokenService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TokenService(IUnitOfWork unitOfWork, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public TokenService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _unitOfWork = unitOfWork;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -58,7 +54,7 @@ namespace JTM.Services.TokenService
             return refreshToken;
         }
 
-        public async Task SetRefreshToken(RefreshTokenDto refreshToken, User user)
+        public Task SetRefreshToken(RefreshTokenDto refreshToken, User user)
         {
             var cookieOptions = new CookieOptions
             {
@@ -70,7 +66,7 @@ namespace JTM.Services.TokenService
             user.RefreshToken = refreshToken.Token;
             user.TokenCreated = refreshToken.Created;
             user.TokenExpires = refreshToken.Expires;
-            await _unitOfWork.SaveChangesAsync();
+            return Task.CompletedTask;
         }
     }
 }
