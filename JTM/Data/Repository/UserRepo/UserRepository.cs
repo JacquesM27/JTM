@@ -1,7 +1,6 @@
-﻿using JTM.Data;
-using JTM.Data.Model;
+﻿using JTM.Data.Model;
 
-namespace JTM.Data.Repository
+namespace JTM.Data.Repository.UserRepo
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {

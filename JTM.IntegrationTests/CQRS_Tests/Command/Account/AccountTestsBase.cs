@@ -1,4 +1,4 @@
-﻿using JTM.Data.Repository;
+﻿using JTM.Data.Repository.User;
 using JTM.Data.UnitOfWork;
 using JTM.Services.RabbitService;
 using Moq;

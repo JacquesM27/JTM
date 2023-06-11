@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace JTM.Data.Model
+﻿namespace JTM.Data.Model
 {
     public class WorkingTime : IEntityBase
     {

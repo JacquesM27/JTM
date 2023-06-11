@@ -29,8 +29,4 @@
     <ProjectReference Include="..\JTM\JTM.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="RepositoryTests\" />
-  </ItemGroup>
-
 </Project>
