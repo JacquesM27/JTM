@@ -20,6 +20,8 @@ namespace JTM.CQRS.Query.WorkingTime
             var workingTime = await _dataContext.WorkingTimes
                 .Include(t => t.Employee)
                 .Include(t => t.Company)
+                .Include(t => t.Author)
+                .Include(t => t.LastEditor)
                 .Where(t => !t.Deleted)
                 .SingleOrDefaultAsync(w => w.Id == request.WorkingTimeId, cancellationToken)
                 ?? throw new NotFoundException($"Working time with id:{request.WorkingTimeId} not found.");
@@ -30,7 +32,9 @@ namespace JTM.CQRS.Query.WorkingTime
                 StartOdWorkingDate = workingTime.StartOdWorkingDate,
                 EndOdWorkingDate = workingTime.EndOdWorkingDate,
                 Note = workingTime.Note,
-                UserName = workingTime.Employee.Username,
+                EmployeeName = workingTime.Employee.Username,
+                AuthorName = workingTime.Author.Username,
+                LastEditorName = workingTime.LastEditor.Username,
                 Company = workingTime.Company.Name
             };
         }
