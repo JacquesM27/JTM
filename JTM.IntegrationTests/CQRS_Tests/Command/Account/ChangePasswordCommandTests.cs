@@ -5,7 +5,7 @@ using JTM.Helper.PasswordHelper;
 using Moq;
 using System.Data.SqlTypes;
 
-namespace JTM.IntegrationTests.CQRS.Command.Account
+namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
 {
     public class ChangePasswordCommandTests : AccountTestsBase
     {
@@ -13,12 +13,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task ChangePassword_ForNotExistingUser_ShouldThrowAuthExceptionWithMessageInvalidUserAsync()
         {
             // Arrange
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult<User?>(null));
 
             var command = new ChangePasswordCommand(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
-            var commandHandler = new ChangePasswordCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -37,12 +37,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 Id = 1,
                 PasswordTokenExpires = (DateTime)SqlDateTime.MinValue
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new ChangePasswordCommand(tmpUser.Id, It.IsAny<string>(), It.IsAny<string>());
-            var commandHandler = new ChangePasswordCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -62,12 +62,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 PasswordTokenExpires = DateTime.Now.AddHours(-1),
                 PasswordResetToken = Guid.NewGuid().ToString()
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new ChangePasswordCommand(tmpUser.Id, It.IsAny<string>(), Guid.NewGuid().ToString());
-            var commandHandler = new ChangePasswordCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -89,12 +89,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 PasswordTokenExpires = DateTime.Now.AddHours(1),
                 PasswordResetToken = tmpToken
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new ChangePasswordCommand(tmpUser.Id, password, tmpToken);
-            var commandHandler = new ChangePasswordCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);
 
             // Act
             await commandHandler.Handle(command, default);

@@ -1,13 +1,9 @@
 ﻿using JTM.CQRS.Command.Account;
-using JTM.Data;
-using JTM.Exceptions;
 using JTM.Data.Model;
-using Microsoft.EntityFrameworkCore;
+using JTM.Exceptions;
 using Moq;
-using System.Linq.Expressions;
-using System.Data.SqlTypes;
 
-namespace JTM.IntegrationTests.CQRS.Command.Account
+namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
 {
     public class ConfirmAccountCommandTests : AccountTestsBase
     {
@@ -15,12 +11,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task ConfirmAccount_ForNotExistingUser_ShouldThrowAuthExceptionWithInvalidUserMessageAsync()
         {
             // Arrange
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult<User?>(null));
 
             var command = new ConfirmAccountCommand(It.IsAny<int>(), It.IsAny<string>());
-            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -39,12 +35,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 Id = 1,
                 EmailConfirmed = true
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new ConfirmAccountCommand(tmpUser.Id, It.IsAny<string>());
-            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -64,12 +60,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 EmailConfirmed = false,
                 ActivationTokenExpires = DateTime.Now.AddHours(-1),
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new ConfirmAccountCommand(tmpUser.Id, It.IsAny<string>());
-            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -91,12 +87,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 ActivationTokenExpires = DateTime.Now.AddHours(1),
                 ActivationToken = tmpToken
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new ConfirmAccountCommand(tmpUser.Id, string.Empty);
-            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -118,12 +114,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 ActivationTokenExpires = DateTime.Now.AddHours(1),
                 ActivationToken = tmpToken
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new ConfirmAccountCommand(tmpUser.Id, tmpToken);
-            var commandHandler = new ConfirmAccountCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
             await commandHandler.Handle(command, default);

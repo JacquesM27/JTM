@@ -3,7 +3,7 @@ using JTM.Data.Model;
 using JTM.Exceptions;
 using Moq;
 
-namespace JTM.IntegrationTests.CQRS.Command.Account
+namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
 {
     public class BanUserCommandTests : AccountTestsBase
     {
@@ -11,12 +11,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
         public async Task BanUser_ForNotExistingUser_ShouldThrowsAuthExceptionWithUserNotFoundMessageAsync()
         {
             // Arrange
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult<User?>(null));
 
             var command = new BanUserCommand(0);
-            var commandHandler = new BanUserCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -35,12 +35,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 Id = 1,
                 Banned = false
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new BanUserCommand(tmpUser.Id);
-            var commandHandler = new BanUserCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);
 
             // Act
             await commandHandler.Handle(command, default);
@@ -58,12 +58,12 @@ namespace JTM.IntegrationTests.CQRS.Command.Account
                 Id = 1,
                 Banned = true
             };
-            _mockUnitOfWork
+            MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
             var command = new BanUserCommand(tmpUser.Id);
-            var commandHandler = new BanUserCommandHandler(_mockUnitOfWork.Object);
+            var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);
 
             // Act
             await commandHandler.Handle(command, default);
