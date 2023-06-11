@@ -1,4 +1,5 @@
 ﻿using JTM.Data.Repository;
+using JTM.Data.Repository.UserRepo;
 
 namespace JTM.Data.UnitOfWork
 {
@@ -19,6 +20,16 @@ namespace JTM.Data.UnitOfWork
             {
                 _userRepository ??= new UserRepository(_context);
                 return _userRepository;
+            }
+        }
+
+        private WorkingTimeRepository _workingTimeRepository;
+        public IWorkingTimeRepository WorkingTimeRepository
+        {
+            get
+            {
+                _workingTimeRepository ??= new WorkingTimeRepository(_context);
+                return _workingTimeRepository;
             }
         }
 
