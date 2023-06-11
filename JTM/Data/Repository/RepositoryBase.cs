@@ -44,10 +44,6 @@ namespace JTM.Data.Repository
             query = includeProperties.Aggregate(
                 query,
                 (current, property) => current.Include(property));
-            //foreach (Expression<Func<TEntity, object>> property in includeProperties)
-            //{
-            //    query = query.Include(property);
-            //}
             query.Where(c => c.Id == id);
             return await query.FirstOrDefaultAsync();
         }
