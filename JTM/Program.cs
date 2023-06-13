@@ -2,6 +2,10 @@ using FluentValidation;
 using JTM.Data;
 using JTM.Data.UnitOfWork;
 using JTM.DTO.Account.RegisterUser;
+using JTM.DTO.Company.AddCompany;
+using JTM.DTO.Company.UpdateCompany;
+using JTM.DTO.WorkingTime.AddWorkingTime;
+using JTM.DTO.WorkingTime.UpdateWorkingTime;
 using JTM.Middleware;
 using JTM.Services.RabbitService;
 using JTM.Services.TokenService;
@@ -10,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using System;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,19 +34,6 @@ builder.Services.AddSwaggerGen(options =>
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
-
-//builder.Services.AddControllers()
-//.AddFluentValidation(options =>
-//{
-//    // Validate child properties and root collection elements
-//    options.ImplicitlyValidateChildProperties = true;
-//    options.ImplicitlyValidateRootCollectionElements = true;
-
-//    // Automatic registration of validators in assembly
-//    options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-//});
-
-//builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
 builder.Services.AddTransient<ExceptionHandlingMessage>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
@@ -72,6 +62,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+builder.Services.AddScoped<IValidator<AddCompanyDto>, AddCompanyDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateCompanyDto>, UpdateCompanyDtoValidator>();
+builder.Services.AddScoped<IValidator<AddWorkingTimeDto>, AddWorkingTimeDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateWorkingTimeDto>, UpdateWorkingTimeDtoValidator>();
 
 var app = builder.Build();
 
