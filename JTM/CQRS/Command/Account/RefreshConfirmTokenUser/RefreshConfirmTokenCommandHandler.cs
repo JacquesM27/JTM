@@ -1,13 +1,11 @@
-﻿using JTM.Data;
+﻿using JTM.Data.Model;
+using JTM.Data.UnitOfWork;
 using JTM.DTO.Account.RegisterUser;
+using JTM.Exceptions;
 using JTM.Services.RabbitService;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using JTM.Exceptions;
-using JTM.Data.Model;
-using JTM.Data.UnitOfWork;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 
 namespace JTM.CQRS.Command.Account
 {

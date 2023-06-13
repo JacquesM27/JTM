@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using JTM.Enum;
+using MediatR;
 
 namespace JTM.CQRS.Command.Account
 {
@@ -7,12 +8,14 @@ namespace JTM.CQRS.Command.Account
         public string UserName { get; init; }
         public string Email { get; init; }
         public string Password { get; init; }
+        public UserRole UserRole { get; init; }
 
-        public RegisterUserCommand(string userName, string email, string password)
+        public RegisterUserCommand(string userName, string email, string password, UserRole userRole)
         {
             UserName = userName;
             Email = email;
             Password = password;
+            UserRole = userRole;
         }
     }
 }

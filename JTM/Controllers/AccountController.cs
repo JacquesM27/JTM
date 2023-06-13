@@ -2,6 +2,7 @@
 using JTM.CQRS.Command.Account;
 using JTM.DTO.Account;
 using JTM.DTO.Account.RegisterUser;
+using JTM.Enum;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,24 @@ namespace JTM.Controllers
             var command = new RegisterUserCommand(
                 userName: request.UserName,
                 email: request.Email,
-                password: request.Password);
+                password: request.Password,
+                UserRole.user);
+            await _mediator.Send(command);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("registerAdmin")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> RegisterAdmin(RegisterUserDto request)
+        {
+            _validator.ValidateAndThrow(request);
+
+            var command = new RegisterUserCommand(
+                userName: request.UserName,
+                email: request.Email,
+                password: request.Password,
+                UserRole.admin);
             await _mediator.Send(command);
             return Ok();
         }

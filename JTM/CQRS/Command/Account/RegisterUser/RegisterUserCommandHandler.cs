@@ -36,7 +36,8 @@ namespace JTM.CQRS.Command.Account
                 PasswordSalt = passwordSalt,
                 ActivationToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 ActivationTokenExpires = DateTime.UtcNow.AddDays(1),
-                PasswordResetToken = null
+                PasswordResetToken = null,
+                Role = request.UserRole.ToString()
             };
 
             await _unitOfWork.UserRepository.AddAsync(newUser);
