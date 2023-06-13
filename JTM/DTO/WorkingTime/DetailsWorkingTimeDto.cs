@@ -1,6 +1,6 @@
 ﻿namespace JTM.DTO.WorkingTime
 {
-    public class DetailsWorkingTimeDto
+    public sealed record DetailsWorkingTimeDto
     {
         public int Id { get; set; }
         public DateTime WorkingDate { get; set; }

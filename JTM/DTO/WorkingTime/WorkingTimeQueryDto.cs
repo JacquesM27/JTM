@@ -1,6 +1,6 @@
 ﻿namespace JTM.DTO.WorkingTime
 {
-    public class WorkingTimeQueryDto
+    public sealed record WorkingTimeQueryDto
     {
         public IEnumerable<int>? EmployeesId { get; set; }
         public DateTime? StartDate { get; set; }

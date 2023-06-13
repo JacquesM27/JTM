@@ -18,7 +18,7 @@ namespace JTM.CQRS.Command.WorkingTime
             await ValidUser(request.DeletorId);
 
             var workingTime = await _unitOfWork.WorkingTimeRepository.GetByIdAsync(request.WorkingTimeId) 
-                ?? throw new WorkingTimeException($"Working time with id:{request.WorkingTimeId} does not exist.");
+                ?? throw new NotFoundException($"Working time with id:{request.WorkingTimeId} does not exist.");
 
             workingTime.Deleted = true;
             workingTime.LastEditorId = request.DeletorId;
@@ -31,7 +31,7 @@ namespace JTM.CQRS.Command.WorkingTime
         private async Task ValidUser(int userId)
         {
             if (!await _unitOfWork.UserRepository.AnyAsync(userId))
-                throw new WorkingTimeException($"User with id:{userId} does not exist.");
+                throw new NotFoundException($"User with id:{userId} does not exist.");
         }
     }
 }

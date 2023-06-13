@@ -15,12 +15,11 @@ namespace JTM.CQRS.Command.WorkingTime
 
         public async Task Handle(UpdateWorkingTimeCommand request, CancellationToken cancellationToken)
         {
-
             if (request.HeaderId != request.RouteId)
                 throw new WorkingTimeException($"Id from header({request.HeaderId}) does not equal id from route({request.RouteId}).");
 
             var timeToUpdate = await _unitOfWork.WorkingTimeRepository.GetByIdAsync(request.HeaderId)
-                ?? throw new WorkingTimeException($"Working time with id: {request.HeaderId} does not exists");
+                ?? throw new NotFoundException($"Working time with id: {request.HeaderId} does not exist.");
 
             await ValidUser(request.EmployeeId);
             await ValidUser(request.EditorId);
@@ -40,14 +39,14 @@ namespace JTM.CQRS.Command.WorkingTime
         private async Task ValidUser(int userId)
         {
             if (!await _unitOfWork.UserRepository.AnyAsync(userId))
-                throw new WorkingTimeException($"User with id:{userId} does not exist.");
+                throw new NotFoundException($"User with id:{userId} does not exist.");
         }
 
         private async Task ValidCompany(int? companyId)
         {
             if (companyId is not null)
                 if (!await _unitOfWork.CompanyRepository.AnyAsync((int)companyId))
-                    throw new WorkingTimeException($"Company with id:{companyId} does not exits.");
+                    throw new NotFoundException($"Company with id:{companyId} does not exist.");
         }
     }
 }

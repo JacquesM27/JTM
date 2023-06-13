@@ -2,8 +2,7 @@
 {
     public class WorkingTimeException : Exception
     {
-        public WorkingTimeException(string message) : base(message)
-        {
-        }
+        public WorkingTimeException(string message) 
+            : base(message) { }
     }
 }
