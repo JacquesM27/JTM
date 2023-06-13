@@ -39,6 +39,8 @@ namespace JTM.Middleware
                 ValidationException => StatusCodes.Status422UnprocessableEntity,
                 NotFoundException => StatusCodes.Status404NotFound,
                 AuthException => StatusCodes.Status400BadRequest,
+                CompanyException => StatusCodes.Status400BadRequest,
+                WorkingTimeException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
 
@@ -48,6 +50,8 @@ namespace JTM.Middleware
                 ValidationException => "ValidationErrors",
                 NotFoundException => "EntityNotFound",
                 AuthException => "UserErrors",
+                CompanyException => "CompanyException",
+                WorkingTimeException => "WorkingTimeException",
                 _ => "ServerError"
             };
 
