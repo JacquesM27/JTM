@@ -81,5 +81,10 @@ namespace JTM.Data.Repository
             _dbSet.Update(entity);
             return Task.CompletedTask;
         }
+
+        public async Task<bool> AnyAsync(int id)
+        {
+            return await _dbSet.AnyAsync(c => c.Id == id);
+        }
     }
 }

@@ -17,5 +17,6 @@ namespace JTM.Data.Repository
         Task RemoveAsync(TEntity entity);
         Task RemoveAsync(IEnumerable<TEntity> entities);
         Task AddAsync(TEntity entity);
+        Task<bool> AnyAsync(int id);
     }
 }
