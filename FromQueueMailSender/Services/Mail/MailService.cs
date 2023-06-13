@@ -1,18 +1,17 @@
 ﻿using FromQueueMailSender.Services.Mail.Formats;
 using FromQueueMailSender.Services.ProgramConfiguration;
 using MailKit.Net.Smtp;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
 
 namespace FromQueueMailSender.Services.Mail
 {
     internal class MailService : IMailService
     {
-        private readonly MailConfiguration _configuration;
+        private readonly MailConnection _configuration;
 
         public MailService(IProgramConfiguration configuration)
         {
-            _configuration = configuration.Connfiguration.MailConfiguration!;
+            _configuration = configuration.Connfiguration.MailConnection!;
         }
         public async Task SendActivationEmailAsync(string receiverName, string receiverEmail,  string url)
         {

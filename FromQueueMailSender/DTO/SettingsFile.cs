@@ -4,7 +4,7 @@
     {
         public RabbitConnection? RabbitConnection { get; init; }
         public RabbitConfiguration? RabbitConfiguration { get; init; }
-        public MailConfiguration? MailConfiguration { get; set; }
+        public MailConnection? MailConnection { get; set; }
     }
 
     public class RabbitConnection
@@ -24,7 +24,7 @@
         public string? ActivateAccountRoutingKey { get; init; }
     }
 
-    public class MailConfiguration
+    public class MailConnection
     {
         public string? Host { get; set; }
         public int Port { get; set; }
