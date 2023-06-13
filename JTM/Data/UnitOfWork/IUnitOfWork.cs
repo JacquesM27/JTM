@@ -1,5 +1,6 @@
-﻿using JTM.Data.Repository;
+﻿using JTM.Data.Repository.CompanyRepo;
 using JTM.Data.Repository.UserRepo;
+using JTM.Data.Repository.WorkingTimeRepo;
 
 namespace JTM.Data.UnitOfWork
 {
@@ -7,6 +8,7 @@ namespace JTM.Data.UnitOfWork
     {
         IUserRepository UserRepository { get; }
         IWorkingTimeRepository WorkingTimeRepository { get; }
+        ICompanyRepository CompanyRepository { get; }
 
         Task SaveChangesAsync();
     }

@@ -1,5 +1,6 @@
-﻿using JTM.Data.Repository;
+﻿using JTM.Data.Repository.CompanyRepo;
 using JTM.Data.Repository.UserRepo;
+using JTM.Data.Repository.WorkingTimeRepo;
 
 namespace JTM.Data.UnitOfWork
 {
@@ -15,23 +16,15 @@ namespace JTM.Data.UnitOfWork
 
         private UserRepository _userRepository;
         public IUserRepository UserRepository
-        {
-            get
-            {
-                _userRepository ??= new UserRepository(_context);
-                return _userRepository;
-            }
-        }
+            => _userRepository ??= new UserRepository(_context);
 
         private WorkingTimeRepository _workingTimeRepository;
         public IWorkingTimeRepository WorkingTimeRepository
-        {
-            get
-            {
-                _workingTimeRepository ??= new WorkingTimeRepository(_context);
-                return _workingTimeRepository;
-            }
-        }
+            => _workingTimeRepository ??= new WorkingTimeRepository(_context);
+
+        private CompanyRepository _companyRepository;
+        public ICompanyRepository CompanyRepository 
+            => _companyRepository ??= new CompanyRepository(_context);
 
         public async ValueTask DisposeAsync()
         {
