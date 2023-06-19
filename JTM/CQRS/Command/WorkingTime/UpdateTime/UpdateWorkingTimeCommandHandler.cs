@@ -19,7 +19,7 @@ namespace JTM.CQRS.Command.WorkingTime
                 throw new WorkingTimeException($"Id from header({request.HeaderId}) does not equal id from route({request.RouteId}).");
 
             var timeToUpdate = await _unitOfWork.WorkingTimeRepository.GetByIdAsync(request.HeaderId)
-                ?? throw new NotFoundException($"Working time with id: {request.HeaderId} does not exist.");
+                ?? throw new WorkingTimeException($"Working time with id: {request.HeaderId} does not exist.");
 
             await ValidUser(request.EmployeeId);
             await ValidUser(request.EditorId);
@@ -29,7 +29,7 @@ namespace JTM.CQRS.Command.WorkingTime
             timeToUpdate.CompanyId = request.CompanyId;
             timeToUpdate.EmployeeId = request.EmployeeId;
             timeToUpdate.LastEditorId = request.EditorId;
-            timeToUpdate.LastModified = DateTime.Now;
+            timeToUpdate.LastModified = DateTime.UtcNow;
             timeToUpdate.WorkingDate = request.WorkingDate;
 
             await _unitOfWork.WorkingTimeRepository.UpdateAsync(request.HeaderId, timeToUpdate);
@@ -39,14 +39,14 @@ namespace JTM.CQRS.Command.WorkingTime
         private async Task ValidUser(int userId)
         {
             if (!await _unitOfWork.UserRepository.AnyAsync(userId))
-                throw new NotFoundException($"User with id:{userId} does not exist.");
+                throw new WorkingTimeException($"User with id:{userId} does not exist.");
         }
 
         private async Task ValidCompany(int? companyId)
         {
             if (companyId is not null)
                 if (!await _unitOfWork.CompanyRepository.AnyAsync((int)companyId))
-                    throw new NotFoundException($"Company with id:{companyId} does not exist.");
+                    throw new WorkingTimeException($"Company with id:{companyId} does not exist.");
         }
     }
 }

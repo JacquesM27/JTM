@@ -36,8 +36,7 @@ namespace JTM.Middleware
         private int GetStatusCode(Exception exception) 
             => exception switch
             {
-                ValidationException => StatusCodes.Status422UnprocessableEntity,
-                NotFoundException => StatusCodes.Status404NotFound,
+                ValidationException => StatusCodes.Status403Forbidden,
                 AuthException => StatusCodes.Status400BadRequest,
                 CompanyException => StatusCodes.Status400BadRequest,
                 WorkingTimeException => StatusCodes.Status400BadRequest,
@@ -48,7 +47,6 @@ namespace JTM.Middleware
             => exception switch
             {
                 ValidationException => "ValidationErrors",
-                NotFoundException => "EntityNotFound",
                 AuthException => "UserErrors",
                 CompanyException => "CompanyException",
                 WorkingTimeException => "WorkingTimeException",

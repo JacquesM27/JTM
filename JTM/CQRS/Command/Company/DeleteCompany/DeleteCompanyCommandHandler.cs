@@ -14,7 +14,7 @@ namespace JTM.CQRS.Command.Company.DeleteCompany
         public async Task Handle(DeleteCompanyCommand request, CancellationToken cancellationToken)
         {
             var company = await _unitOfWork.CompanyRepository.GetByIdAsync(request.Id)
-                ?? throw new NotFoundException($"Company with id:{request.Id} does not exists");
+                ?? throw new CompanyException($"Company with id:{request.Id} does not exist.");
 
             await _unitOfWork.CompanyRepository.RemoveAsync(company);
             await _unitOfWork.SaveChangesAsync();

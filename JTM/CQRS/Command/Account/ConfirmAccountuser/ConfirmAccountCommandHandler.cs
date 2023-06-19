@@ -21,7 +21,7 @@ namespace JTM.CQRS.Command.Account
                 throw new AuthException("Invalid user.");
             else if (user.EmailConfirmed)
                 throw new AuthException("User already confirmed.");
-            else if (user.ActivationTokenExpires < DateTime.Now)
+            else if (user.ActivationTokenExpires < DateTime.UtcNow)
                 throw new AuthException("Token expired.");
             else if (string.IsNullOrEmpty(request.Token))
                 throw new AuthException("Invalid token.");

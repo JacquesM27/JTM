@@ -19,7 +19,7 @@ namespace JTM.CQRS.Command.Company.UpdateCompany
                 throw new CompanyException($"Id from header({request.HeaderId}) does not equal id from route({request.RouteId}).");
 
             var company = await _unitOfWork.CompanyRepository.GetByIdAsync(request.HeaderId )
-                ?? throw new NotFoundException($"Company with Id:{request.HeaderId} does not exist."); 
+                ?? throw new CompanyException($"Company with Id:{request.HeaderId} does not exist."); 
 
             company.Name = request.Name;
             await _unitOfWork.CompanyRepository.UpdateAsync(request.HeaderId ,company);

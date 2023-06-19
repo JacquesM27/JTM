@@ -6,7 +6,7 @@
         public DateTime WorkingDate { get; set; }
         public int SecondsOfWork { get; set; }
         public string Note { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastModified { get; set; }
         public bool Deleted { get; set; }
 

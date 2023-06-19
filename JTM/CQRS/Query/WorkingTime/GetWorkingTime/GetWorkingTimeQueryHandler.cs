@@ -28,7 +28,7 @@ namespace JTM.CQRS.Query.WorkingTime
                 wt => wt.LastEditor
             };
             var workingTime = await _unitOfWork.WorkingTimeRepository.QuerySingleAsync(filter, includeProperties)
-                ?? throw new NotFoundException($"Working time with id:{request.WorkingTimeId} not found.");
+                ?? throw new WorkingTimeException($"Working time with id:{request.WorkingTimeId} not found.");
 
             return new DetailsWorkingTimeDto()
             {
