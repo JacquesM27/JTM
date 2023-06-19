@@ -5,6 +5,7 @@ using JTM.Enum;
 using JTM.Exceptions;
 using Moq;
 using System.Data.SqlTypes;
+using System.Linq.Expressions;
 
 namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
 {
@@ -44,7 +45,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
                 PasswordResetToken = null
             };
             MockUnitOfWork
-                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
+                .Setup(x => x.UserRepository.QuerySingleAsync(It.IsAny<Expression<Func<User,bool>>>()))
                 .Returns(Task.FromResult(tmpUser));
             MockRabbitService
                .Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
@@ -56,8 +57,8 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             await commandHandler.Handle(command, default);
 
             // Assert
-            Assert.True(tmpUser.PasswordTokenExpires > DateTime.Now.AddHours(23));
-            Assert.True(tmpUser.PasswordResetToken.Length == 64);
+            Assert.True(tmpUser.PasswordTokenExpires > DateTime.UtcNow.AddHours(23));
+            Assert.True(Convert.FromBase64String(tmpUser.PasswordResetToken).Length == 64);
         }
     }
 }

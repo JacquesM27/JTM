@@ -58,7 +58,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             {
                 Id = 1,
                 EmailConfirmed = false,
-                ActivationTokenExpires = DateTime.Now.AddHours(-1),
+                ActivationTokenExpires = DateTime.UtcNow.AddHours(-1),
             };
             MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
@@ -84,7 +84,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             {
                 Id = 1,
                 EmailConfirmed = false,
-                ActivationTokenExpires = DateTime.Now.AddHours(1),
+                ActivationTokenExpires = DateTime.UtcNow.AddHours(1),
                 ActivationToken = tmpToken
             };
             MockUnitOfWork
@@ -111,7 +111,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             {
                 Id = 1,
                 EmailConfirmed = false,
-                ActivationTokenExpires = DateTime.Now.AddHours(1),
+                ActivationTokenExpires = DateTime.UtcNow.AddHours(1),
                 ActivationToken = tmpToken
             };
             MockUnitOfWork

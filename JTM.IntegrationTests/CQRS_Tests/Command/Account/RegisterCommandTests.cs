@@ -20,7 +20,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
                 .Setup(c => c.UserRepository.QuerySingleAsync(It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(Task.FromResult<User?>(new User()));
 
-            var command = new RegisterUserCommand(string.Empty, string.Empty, string.Empty);
+            var command = new RegisterUserCommand(string.Empty, string.Empty, string.Empty, UserRole.user);
             var commandHandler = new RegisterUserCommandHandler(MockUnitOfWork.Object, MockRabbitService.Object);
 
             // Act
@@ -37,7 +37,19 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             // Arrange
             MockRabbitService
                .Setup(c => c.SendMessage(It.IsAny<MessageQueueType>(), It.IsAny<MessageDto>()));
+            MockUnitOfWork
+                .Setup(c => c.UserRepository.QuerySingleAsync(It.IsAny<Expression<Func<User, bool>>>()))
+                .Returns(Task.FromResult<User?>(null));
+            MockUnitOfWork
+                .Setup(c => c.UserRepository.AddAsync(It.IsAny<User>()));
 
+            var command = new RegisterUserCommand(string.Empty, string.Empty, string.Empty, UserRole.user);
+            var commandHandler = new RegisterUserCommandHandler(MockUnitOfWork.Object, MockRabbitService.Object);
+
+            // Act
+            await commandHandler.Handle(command, default);
+
+            // Assert
         }
     }
 }

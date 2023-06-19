@@ -59,7 +59,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             User tmpUser = new()
             {
                 Id = 1,
-                PasswordTokenExpires = DateTime.Now.AddHours(-1),
+                PasswordTokenExpires = DateTime.UtcNow.AddHours(1),
                 PasswordResetToken = Guid.NewGuid().ToString()
             };
             MockUnitOfWork
@@ -86,7 +86,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             User tmpUser = new()
             {
                 Id = 1,
-                PasswordTokenExpires = DateTime.Now.AddHours(1),
+                PasswordTokenExpires = DateTime.UtcNow.AddHours(1),
                 PasswordResetToken = tmpToken
             };
             MockUnitOfWork
