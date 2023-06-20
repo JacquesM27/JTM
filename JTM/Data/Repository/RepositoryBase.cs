@@ -45,7 +45,7 @@ namespace JTM.Data.Repository
                 query,
                 (current, property) => current.Include(property));
             query.Where(c => c.Id == id);
-            return await query.FirstOrDefault();
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<TEntity>> QueryAsync(Expression<Func<TEntity, bool>>? filter = null, params Expression<Func<TEntity, object>>[] includeProperties)
@@ -59,7 +59,7 @@ namespace JTM.Data.Repository
                 query,
                 (current, property) => current.Include(property));
 
-            return await query.ToList();
+            return await query.ToListAsync();
         }
 
         public async Task<TEntity?> QuerySingleAsync(Expression<Func<TEntity, bool>>? filter = null, params Expression<Func<TEntity, object>>[] includeProperties)
@@ -73,7 +73,7 @@ namespace JTM.Data.Repository
                 query,
                 (current, property) => current.Include(property));
 
-            return await query.FirstOrDefault();
+            return await query.FirstOrDefaultAsync();
         }
 
         public Task UpdateAsync(int id, TEntity entity)

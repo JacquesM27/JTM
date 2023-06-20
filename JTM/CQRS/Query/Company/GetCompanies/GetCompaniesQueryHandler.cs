@@ -15,7 +15,7 @@ namespace JTM.CQRS.Query.Company
 
         public async Task<IEnumerable<CompanyDto>> Handle(GetCompaniesQuery request, CancellationToken cancellationToken)
         {
-            var companies = await _unitOfWork.CompanyRepository.Query();
+            var companies = await _unitOfWork.CompanyRepository.QueryAsync();
             var companiesDto = companies.Select(c => new CompanyDto() { Id = c.Id, Name = c.Name });
             return companiesDto;
         }
