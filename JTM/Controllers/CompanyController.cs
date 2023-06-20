@@ -39,6 +39,14 @@ namespace JTM.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{companyId}")]
+        public async Task<ActionResult<CompanyDto>> GetCompany([FromRoute] int companyId)
+        {
+            var command = new GetCompanyQuery(companyId);
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<ActionResult> AddCompany(AddCompanyDto request)
         {
