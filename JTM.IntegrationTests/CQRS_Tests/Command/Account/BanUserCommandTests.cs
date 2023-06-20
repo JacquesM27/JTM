@@ -8,7 +8,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
     public class BanUserCommandTests : AccountTestsBase
     {
         [Fact]
-        public async Task BanUser_ForNotExistingUser_ShouldThrowsAuthExceptionWithUserNotFoundMessageAsync()
+        public async Task BanUser_ForNotExistingUser_ShouldThrowsAuthExceptionWithUserNotFoundMessage()
         {
             // Arrange
             MockUnitOfWork
@@ -27,7 +27,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task BanUser_ForValidUser_ShouldBanUserAsync()
+        public async Task BanUser_ForValidUser_ShouldBanUser()
         {
             // Arrange
             User tmpUser = new()
@@ -37,7 +37,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             };
             MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult(tmpUser));
+                .Returns(Task.FromResult<User?>(tmpUser));
 
             var command = new BanUserCommand(tmpUser.Id);
             var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);
@@ -50,7 +50,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task BanUser_ForBannedUser_ShouldKeepBanUserAsync()
+        public async Task BanUser_ForBannedUser_ShouldKeepBanUser()
         {
             // Arrange
             User tmpUser = new()
@@ -60,7 +60,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
             };
             MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult(tmpUser));
+                .Returns(Task.FromResult<User?>(tmpUser));
 
             var command = new BanUserCommand(tmpUser.Id);
             var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);

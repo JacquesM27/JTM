@@ -10,7 +10,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
     public class ChangePasswordCommandTests : AccountTestsBase
     {
         [Fact]
-        public async Task ChangePassword_ForNotExistingUser_ShouldThrowAuthExceptionWithMessageInvalidUserAsync()
+        public async Task ChangePassword_ForNotExistingUser_ShouldThrowAuthExceptionWithMessageInvalidUser()
         {
             // Arrange
             MockUnitOfWork
@@ -29,7 +29,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ChangePassword_ForExpiredToken_ShouldThrowAuthExceptionWithMessageTokenExpiresAsync()
+        public async Task ChangePassword_ForExpiredToken_ShouldThrowAuthExceptionWithMessageTokenExpires()
         {
             // Arrange
             User tmpUser = new()
@@ -53,7 +53,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ChangePassword_ForInvalidToken_ShouldThrowAuthExceptionWithMessageInvalidTokenAsync()
+        public async Task ChangePassword_ForInvalidToken_ShouldThrowAuthExceptionWithMessageInvalidToken()
         {
             // Arrange
             User tmpUser = new()
@@ -78,7 +78,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ChangePassword_ForValidData_ShouldResetPasswordAsync()
+        public async Task ChangePassword_ForValidData_ShouldResetPassword()
         {
             // Arrange
             string tmpToken = Guid.NewGuid().ToString();

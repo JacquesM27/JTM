@@ -12,7 +12,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
     public class ForgetPasswordCommandTests : AccountTestsBase
     {
         [Fact]
-        public async Task ForgetPassword_ForNotExitsingUser_ShouldThrowsAuthExeptionWithUserNotFoundMessageAsync()
+        public async Task ForgetPassword_ForNotExitsingUser_ShouldThrowsAuthExeptionWithUserNotFoundMessage()
         {
             // Arrange
             MockRabbitService
@@ -33,7 +33,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ForgetPassword_ForExistingUser_ShouldSetPasswordResetTokenAndDateAsync()
+        public async Task ForgetPassword_ForExistingUser_ShouldSetPasswordResetTokenAndDate()
         {
             // Arrange
             string email = "test@test.com";

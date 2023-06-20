@@ -11,7 +11,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
     public class RegisterCommandTests : AccountTestsBase
     {
         [Fact]
-        public async Task RegisterUser_ForBusyEmail_ShouldThrowValidationExceptionWithBusyMessageAsync()
+        public async Task RegisterUser_ForBusyEmail_ShouldThrowValidationExceptionWithBusyMessage()
         {
             // Arrange
             MockRabbitService
@@ -32,7 +32,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task RegisterUser_ForAvaliableEmail_ShouldAddUserAsync()
+        public async Task RegisterUser_ForAvaliableEmail_ShouldAddUser()
         {
             // Arrange
             MockRabbitService

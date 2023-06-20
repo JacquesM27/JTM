@@ -8,7 +8,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
     public class ConfirmAccountCommandTests : AccountTestsBase
     {
         [Fact]
-        public async Task ConfirmAccount_ForNotExistingUser_ShouldThrowAuthExceptionWithInvalidUserMessageAsync()
+        public async Task ConfirmAccount_ForNotExistingUser_ShouldThrowAuthExceptionWithInvalidUserMessage()
         {
             // Arrange
             MockUnitOfWork
@@ -27,7 +27,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForAlreadyConfirmedUser_ShouldThrowAuthExceptionWithUserConfirmedMessageAsync()
+        public async Task ConfirmAccount_ForAlreadyConfirmedUser_ShouldThrowAuthExceptionWithUserConfirmedMessage()
         {
             // Arrange
             User tmpUser = new()
@@ -51,7 +51,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForTokenExpired_ShouldThrowAuthExceptionWithTokenExpiredMessageAsync()
+        public async Task ConfirmAccount_ForTokenExpired_ShouldThrowAuthExceptionWithTokenExpiredMessage()
         {
             // Arrange
             User tmpUser = new()
@@ -76,7 +76,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForInvalidToken_ShouldThrowAuthExceptionWithInvalidTokenMessageAsync()
+        public async Task ConfirmAccount_ForInvalidToken_ShouldThrowAuthExceptionWithInvalidTokenMessage()
         {
             // Arrange
             string tmpToken = Guid.NewGuid().ToString();
@@ -103,7 +103,7 @@ namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task ConfirmAccount_ForValidUser_ShouldActivateAccountAsync()
+        public async Task ConfirmAccount_ForValidUser_ShouldActivateAccount()
         {
             // Arrange
             string tmpToken = Guid.NewGuid().ToString();
