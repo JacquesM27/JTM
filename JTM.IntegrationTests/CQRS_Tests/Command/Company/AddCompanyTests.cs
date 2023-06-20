@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
 using JTM.CQRS.Command.Company.AddCompany;
-using JTM.Data.Model;
-using JTM.Exceptions;
 using Moq;
 using System.Linq.Expressions;
 using Model = JTM.Data.Model;
