@@ -5,7 +5,7 @@ using JTM.Helper.PasswordHelper;
 using Moq;
 using System.Data.SqlTypes;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
+namespace JTM.UnitTests.CQRS_Tests.Command.Account
 {
     public class ChangePasswordCommandTests : AccountTestsBase
     {

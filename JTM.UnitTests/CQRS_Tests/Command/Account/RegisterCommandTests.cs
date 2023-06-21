@@ -6,7 +6,7 @@ using JTM.Enum;
 using Moq;
 using System.Linq.Expressions;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
+namespace JTM.UnitTests.CQRS_Tests.Command.Account
 {
     public class RegisterCommandTests : AccountTestsBase
     {

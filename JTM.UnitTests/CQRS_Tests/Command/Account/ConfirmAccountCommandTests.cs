@@ -3,7 +3,7 @@ using JTM.Data.Model;
 using JTM.Exceptions;
 using Moq;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
+namespace JTM.UnitTests.CQRS_Tests.Command.Account
 {
     public class ConfirmAccountCommandTests : AccountTestsBase
     {

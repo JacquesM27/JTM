@@ -3,9 +3,9 @@ using JTM.Exceptions;
 using Moq;
 using Model = JTM.Data.Model;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Command.Company
+namespace JTM.UnitTests.CQRS_Tests.Command.Company
 {
-    public class DeleteCompanyTests : CompanyTestBase
+    public class DeleteCompanyTests : UnitTestBase
     {
         [Fact]
         public async Task DeleteCompany_ForNotExistingCompany_ShouldThrowNotExistException()

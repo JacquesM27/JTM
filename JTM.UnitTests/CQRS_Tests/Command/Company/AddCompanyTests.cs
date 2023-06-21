@@ -4,9 +4,9 @@ using Moq;
 using System.Linq.Expressions;
 using Model = JTM.Data.Model;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Command.Company
+namespace JTM.UnitTests.CQRS_Tests.Command.Company
 {
-    public class AddCompanyTests : CompanyTestBase
+    public class AddCompanyTests : UnitTestBase
     {
         [Fact]
         public async Task AddCompany_ForBusyName_ShouldThrowValidationExceptionWithNameBusyMessage()

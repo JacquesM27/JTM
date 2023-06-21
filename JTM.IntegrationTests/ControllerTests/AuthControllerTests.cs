@@ -45,7 +45,7 @@ namespace JTM.IntegrationTests.ControllersTests
                         //    services.Remove(item);
                         //}
                         //services.AddScoped<IDapperConnectionFactory, TestDapperConnectionFactory>();
-                        services.AddSingleton(_authServiceMock.Object);
+                        //services.AddSingleton(_authServiceMock.Object);
                     });
                 })
                 .CreateClient();

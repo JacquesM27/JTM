@@ -1,13 +1,13 @@
 ﻿using JTM.Data.UnitOfWork;
 using Moq;
 
-namespace JTM.IntegrationTests.CQRS_Tests
+namespace JTM.UnitTests.CQRS_Tests
 {
-    public class CompanyTestBase
+    public class UnitTestBase
     {
         protected readonly Mock<IUnitOfWork> MockUnitOfWork;
 
-        public CompanyTestBase()
+        public UnitTestBase()
         {
             MockUnitOfWork = new();
         }

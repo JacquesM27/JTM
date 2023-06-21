@@ -1,12 +1,12 @@
 {
   "profiles": {
-    "JTM.IntegrationsTests": {
+    "JTM.UnitTests": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:54756;http://localhost:54757"
+      "applicationUrl": "https://localhost:49906;http://localhost:49907"
     }
   }
 }

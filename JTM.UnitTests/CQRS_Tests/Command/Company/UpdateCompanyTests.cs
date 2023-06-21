@@ -3,9 +3,9 @@ using JTM.Exceptions;
 using Moq;
 using Model = JTM.Data.Model;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Command.Company
+namespace JTM.UnitTests.CQRS_Tests.Command.Company
 {
-    public class UpdateCompanyTests : CompanyTestBase
+    public class UpdateCompanyTests : UnitTestBase
     {
         [Fact]
         public async Task UpdateCompany_ForDiffrentRouteAndBodyIds_ShouldThrowCompanyException()

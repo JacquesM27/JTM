@@ -3,9 +3,9 @@ using JTM.DTO.Company;
 using Moq;
 using Model = JTM.Data.Model;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Queries.Company
+namespace JTM.UnitTests.CQRS_Tests.Queries.Company
 {
-    public class GetCompaniesTests : CompanyTestBase
+    public class GetCompaniesTests : UnitTestBase
     {
         [Fact]
         public async Task GetCompanies_ForNoneCompany_ShouldReturnEmptyCollection()

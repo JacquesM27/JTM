@@ -5,9 +5,9 @@ using Moq;
 using System.Linq.Expressions;
 using Model = JTM.Data.Model;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Queries.Company
+namespace JTM.UnitTests.CQRS_Tests.Queries.Company
 {
-    public class GetCompanyTests : CompanyTestBase
+    public class GetCompanyTests : UnitTestBase
     {
         [Fact]
         public async Task GetCompany_ForInvalidArgument_ShouldThrowsCompanyException()

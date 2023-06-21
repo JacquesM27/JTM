@@ -3,7 +3,7 @@ using JTM.Data.UnitOfWork;
 using JTM.Services.RabbitService;
 using Moq;
 
-namespace JTM.IntegrationTests.CQRS_Tests.Command.Account
+namespace JTM.UnitTests.CQRS_Tests.Command.Account
 {
     public abstract class AccountTestsBase
     {
