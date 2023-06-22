@@ -1,26 +1,24 @@
 ﻿using JTM.Data.UnitOfWork;
 using JTM.Exceptions;
 using MediatR;
-using System.Data.SqlTypes;
 
 namespace JTM.CQRS.Command.Account
 {
-    public sealed class BanUserCommandHandler : IRequestHandler<BanUserCommand, int>
+    public class UnbanUserCommandHandler : IRequestHandler<UnbanUserCommand, int>
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public BanUserCommandHandler(IUnitOfWork unitOfWork)
+        public UnbanUserCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> Handle(BanUserCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(UnbanUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId)
-                 ?? throw new AuthException("Invalid user.");
+                ?? throw new AuthException("Invalid user.");
 
-            user.Banned = true;
-            user.TokenExpires = (DateTime)SqlDateTime.MinValue;
+            user.Banned = false;
             await _unitOfWork.UserRepository.UpdateAsync(user.Id, user);
             await _unitOfWork.SaveChangesAsync();
 

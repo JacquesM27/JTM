@@ -2,12 +2,12 @@
 
 namespace JTM.CQRS.Command.Account
 {
-    public sealed record BanUserCommand : IRequest<int>
+    public class UnbanUserCommand : IRequest<int>
     {
         public int UserId { get; init; }
 
-        public BanUserCommand(int userId)
-        {
+        public UnbanUserCommand(int userId) 
+        { 
             UserId = userId;
         }
     }

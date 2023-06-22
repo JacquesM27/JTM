@@ -1,54 +1,43 @@
-﻿using FluentAssertions;
-//using JTM.CQRS.Command.SendRabbitActivationMessage;
-//using JTM.CQRS.Command.User.RegisterUser;
-using JTM.Data;
-using JTM.DTO.Account;
-using JTM.DTO.Account.RegisterUser;
-using JTM.IntegrationTests.Helpers;
-//using JTM.Services.AuthService;
+﻿using JTM.Data;
 using JTM.Services.RabbitService;
-using JTM.Services.TokenService;
-using MediatR;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Moq;
-using RabbitMQ.Client;
 
 namespace JTM.IntegrationTests.ControllersTests
 {
     public class AuthControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
-        //private readonly string _testConnectionString;
         private readonly HttpClient _httpClient;
-        private readonly Mock<ITokenService> _authServiceMock = new();
-        private readonly Mock<IMediator> _mediatorMock = new();
-        private readonly Mock<DataContext> _dataContextMock = new();
+        private readonly DataContext _dataContext;
+        private readonly Mock<IRabbitService> _mockRabbitService;
 
         public AuthControllerTests(WebApplicationFactory<Program> factory)
         {
-            //var configuration = new ConfigurationBuilder()
-            //    .AddJsonFile("appsettings.json")
-            //    .Build();
-            //_testConnectionString = configuration.GetConnectionString("TestConnectionString");
             _httpClient = factory
                 .WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureServices(services =>
                     {
-                        //var dbContextOptions = services.SingleOrDefault(service =>
-                        //    service.ServiceType == typeof(DbContextOptions<DataContext>));
-                        //services.Remove(dbContextOptions);
+                        var dbContextOptions = services.SingleOrDefault(service =>
+                            service.ServiceType == typeof(DbContextOptions<DataContext>));
+                        services.Remove(dbContextOptions!);
+                        services.AddDbContext<DataContext>(options =>
+                            options.UseInMemoryDatabase("Jtm_InMemory"));
                         //services.AddDbContext<DataContext>(options =>
                         //    options.UseSqlServer(_testConnectionString));
-                        //var IDbConnection = services.Where(s => s.ServiceType == typeof(IDapperConnectionFactory)).ToList();
-                        //foreach (var item in IDbConnection)
-                        //{
-                        //    services.Remove(item);
-                        //}
-                        //services.AddScoped<IDapperConnectionFactory, TestDapperConnectionFactory>();
                         //services.AddSingleton(_authServiceMock.Object);
                     });
                 })
                 .CreateClient();
+            _mockRabbitService = new();
+        }
+
+        [Fact]
+        public async Task Register_ForValidUser_ReturnOk()
+        {
+
         }
 
         [Fact]

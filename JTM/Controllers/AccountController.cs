@@ -122,11 +122,21 @@ namespace JTM.Controllers
         [HttpPost]
         [Route("banhammer")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult> BanUser(int userId)
+        public async Task<ActionResult<int>> BanUser(int userId)
         {
             var command = new BanUserCommand(userId: userId);
-            await _mediator.Send(command);
-            return Ok();
+            int result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("unban")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<int>> UnbanUser(int userId)
+        {
+            var command = new UnbanUserCommand(userId: userId);
+            int result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }
