@@ -46,7 +46,7 @@ namespace JTM.CQRS.Command.WorkingTime
         {
             if (companyId is not null)
                 if (!await _unitOfWork.CompanyRepository.AnyAsync((int)companyId))
-                    throw new AuthException($"Company with id:{companyId} does not exits.");
+                    throw new CompanyException($"Company with id:{companyId} does not exist.");
         }
     }
 }

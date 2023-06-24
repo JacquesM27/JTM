@@ -13,10 +13,10 @@ namespace JTM.CQRS.Command.WorkingTime
         public int EmployeeId { get; init; }
         public int EditorId { get; init; }
 
-        public UpdateWorkingTimeCommand(int headerId, int bodyId, DateTime workingDate, int secondsOfWork, string? note, int? companyId, int employeeId, int editorId)
+        public UpdateWorkingTimeCommand(int headerId, int routeId, DateTime workingDate, int secondsOfWork, string? note, int? companyId, int employeeId, int editorId)
         {
             HeaderId = headerId;
-            RouteId = bodyId;
+            RouteId = routeId;
             WorkingDate = workingDate;
             SecondsOfWork = secondsOfWork;
             Note = note;

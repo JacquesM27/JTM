@@ -31,7 +31,7 @@ namespace JTM.CQRS.Command.WorkingTime
         private async Task ValidUser(int userId)
         {
             if (!await _unitOfWork.UserRepository.AnyAsync(userId))
-                throw new WorkingTimeException($"User with id:{userId} does not exist.");
+                throw new AuthException($"User with id:{userId} does not exist.");
         }
     }
 }

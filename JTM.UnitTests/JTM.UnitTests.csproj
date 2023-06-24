@@ -24,8 +24,4 @@
     <ProjectReference Include="..\JTM\JTM.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CQRS_Tests\Command\WorkingTime\" />
-  </ItemGroup>
-
 </Project>
