@@ -5,18 +5,18 @@ using Moq;
 
 namespace JTM.UnitTests.CQRS_Tests.Command.Account
 {
-    public class BanUserCommandTests : AccountTestsBase
+    public class UnbanCommandTests : AccountTestsBase
     {
         [Fact]
-        public async Task BanUser_ForNotExistingUser_ShouldThrowsAuthExceptionnWithInvalidUserMessage()
+        public async Task UnbanUser_ForNotExistingUser_ShouldThrowsAuthExceptionWithInvalidUserMessage()
         {
             // Arrange
             MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult<User?>(null));
 
-            var command = new BanUserCommand(0);
-            var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);
+            var command = new UnbanCommand(0);
+            var commandHandler = new UnbanCommandHandler(MockUnitOfWork.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -27,31 +27,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
         }
 
         [Fact]
-        public async Task BanUser_ForValidUser_ShouldBanUserAndReturnsSameId()
-        {
-            // Arrange
-            User tmpUser = new()
-            {
-                Id = 1,
-                Banned = false
-            };
-            MockUnitOfWork
-                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult<User?>(tmpUser));
-
-            var command = new BanUserCommand(tmpUser.Id);
-            var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);
-
-            // Act
-            var result = await commandHandler.Handle(command, default);
-
-            // Assert
-            Assert.True(tmpUser.Banned);
-            Assert.Equal(tmpUser.Id, result);
-        }
-
-        [Fact]
-        public async Task BanUser_ForBannedUser_ShouldKeepBanUserAndReturnsSameId()
+        public async Task UnbanUser_ForValidUser_ShouldUnbanUserAndReturnsSameId()
         {
             // Arrange
             User tmpUser = new()
@@ -63,14 +39,38 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult<User?>(tmpUser));
 
-            var command = new BanUserCommand(tmpUser.Id);
-            var commandHandler = new BanUserCommandHandler(MockUnitOfWork.Object);
+            var command = new UnbanCommand(tmpUser.Id);
+            var commandHandler = new UnbanCommandHandler(MockUnitOfWork.Object);
 
             // Act
             var result = await commandHandler.Handle(command, default);
 
             // Assert
-            Assert.True(tmpUser.Banned);
+            Assert.False(tmpUser.Banned);
+            Assert.Equal(tmpUser.Id, result);
+        }
+
+        [Fact]
+        public async Task UnbanUser_ForBannedUser_ShouldKeepUnbanUserAndReturnsSameId()
+        {
+            // Arrange
+            User tmpUser = new()
+            {
+                Id = 1,
+                Banned = false
+            };
+            MockUnitOfWork
+                .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
+                .Returns(Task.FromResult<User?>(tmpUser));
+
+            var command = new UnbanCommand(tmpUser.Id);
+            var commandHandler = new UnbanCommandHandler(MockUnitOfWork.Object);
+
+            // Act
+            var result = await commandHandler.Handle(command, default);
+
+            // Assert
+            Assert.False(tmpUser.Banned);
             Assert.Equal(tmpUser.Id, result);
         }
     }

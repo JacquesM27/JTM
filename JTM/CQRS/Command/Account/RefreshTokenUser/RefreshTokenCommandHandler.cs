@@ -8,12 +8,12 @@ using System.Linq.Expressions;
 
 namespace JTM.CQRS.Command.Account
 {
-    public sealed class RefreshTokenUserCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponseDto>
+    public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponseDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenService;
 
-        public RefreshTokenUserCommandHandler(
+        public RefreshTokenCommandHandler(
             IUnitOfWork unitOfWork,
             ITokenService tokenService)
         {
@@ -30,7 +30,7 @@ namespace JTM.CQRS.Command.Account
             var user = await _unitOfWork.UserRepository.QuerySingleAsync(filter);
 
             if (user is null)
-                throw new AuthException("Invalid user.");
+                throw new AuthException("Invalid token.");
             else if (user.Banned)
                 throw new AuthException("Account banned.");
             else if (user.TokenExpires < DateTime.UtcNow)

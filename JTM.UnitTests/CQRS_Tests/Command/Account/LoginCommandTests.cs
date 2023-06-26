@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace JTM.UnitTests.CQRS_Tests.Command.Account
 {
-    public class LoginUserCommandTests : AccountTestsBase
+    public class LoginCommandTests : AccountTestsBase
     {
         [Fact]
         public async Task LoginUser_ForNotExistingUser_ShouldThrowAuthExceptionWithMessageInvalidUser()
