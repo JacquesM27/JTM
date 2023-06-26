@@ -19,7 +19,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Returns(Task.FromResult<User?>(null));
 
             var command = new LoginCommand(string.Empty, string.Empty);
-            var commandHandler = new LoginUserCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
+            var commandHandler = new LoginCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -42,7 +42,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Returns(Task.FromResult<User?>(bannedUser));
 
             var command = new LoginCommand(string.Empty, string.Empty);
-            var commandHandler = new LoginUserCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
+            var commandHandler = new LoginCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -66,7 +66,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Returns(Task.FromResult<User?>(notConfirmedUser));
 
             var command = new LoginCommand(string.Empty, string.Empty);
-            var commandHandler = new LoginUserCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
+            var commandHandler = new LoginCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -93,7 +93,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Returns(Task.FromResult<User?>(someUser));
 
             var command = new LoginCommand(string.Empty, string.Empty);
-            var commandHandler = new LoginUserCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
+            var commandHandler = new LoginCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -129,7 +129,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Setup(x => x.SaveChangesAsync());
 
             var command = new LoginCommand(string.Empty, tmpUserPassword);
-            var commandHandler = new LoginUserCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
+            var commandHandler = new LoginCommandHandler(MockUnitOfWork.Object, MockTokenService.Object);
 
             // Act
             await commandHandler.Handle(command, default);

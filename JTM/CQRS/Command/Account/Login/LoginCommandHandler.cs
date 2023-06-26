@@ -9,12 +9,12 @@ using System.Linq.Expressions;
 
 namespace JTM.CQRS.Command.Account
 {
-    public sealed class LoginUserCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
+    public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenService;
 
-        public LoginUserCommandHandler(IUnitOfWork unitOfWork, ITokenService authService)
+        public LoginCommandHandler(IUnitOfWork unitOfWork, ITokenService authService)
         {
             _unitOfWork = unitOfWork;
             _tokenService = authService;
