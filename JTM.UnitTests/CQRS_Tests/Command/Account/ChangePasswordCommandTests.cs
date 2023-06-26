@@ -17,7 +17,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult<User?>(null));
 
-            var command = new ChangePasswordCommand(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
+            var command = new ChangePasswordCommand(It.IsAny<int>(), string.Empty, string.Empty);
             var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);
 
             // Act
@@ -39,9 +39,9 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
             };
             MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult(tmpUser));
+                .Returns(Task.FromResult<User?>(tmpUser));
 
-            var command = new ChangePasswordCommand(tmpUser.Id, It.IsAny<string>(), It.IsAny<string>());
+            var command = new ChangePasswordCommand(tmpUser.Id, string.Empty, string.Empty);
             var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);
 
             // Act
@@ -64,9 +64,9 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
             };
             MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult(tmpUser));
+                .Returns(Task.FromResult<User?>(tmpUser));
 
-            var command = new ChangePasswordCommand(tmpUser.Id, It.IsAny<string>(), Guid.NewGuid().ToString());
+            var command = new ChangePasswordCommand(tmpUser.Id, string.Empty, Guid.NewGuid().ToString());
             var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);
 
             // Act
@@ -91,7 +91,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
             };
             MockUnitOfWork
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
-                .Returns(Task.FromResult(tmpUser));
+                .Returns(Task.FromResult<User?>(tmpUser));
 
             var command = new ChangePasswordCommand(tmpUser.Id, password, tmpToken);
             var commandHandler = new ChangePasswordCommandHandler(MockUnitOfWork.Object);

@@ -18,7 +18,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.WorkingTime
                 routeId: tmpRouteId,
                 workingDate: It.IsAny<DateTime>(),
                 secondsOfWork: It.IsAny<int>(),
-                note: It.IsAny<string>(),
+                note: string.Empty,
                 companyId: It.IsAny<int>(),
                 employeeId: It.IsAny<int>(),
                 editorId: It.IsAny<int>()
@@ -47,7 +47,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.WorkingTime
                routeId: tmpId,
                workingDate: It.IsAny<DateTime>(),
                secondsOfWork: It.IsAny<int>(),
-               note: It.IsAny<string>(),
+               note: string.Empty,
                companyId: It.IsAny<int>(),
                employeeId: It.IsAny<int>(),
                editorId: It.IsAny<int>()
@@ -79,7 +79,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.WorkingTime
               routeId: It.IsAny<int>(),
               workingDate: It.IsAny<DateTime>(),
               secondsOfWork: It.IsAny<int>(),
-              note: It.IsAny<string>(),
+              note: string.Empty,
               companyId: It.IsAny<int>(),
               employeeId: tmpEmployeeId,
               editorId: It.IsAny<int>()
@@ -115,7 +115,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.WorkingTime
               routeId: It.IsAny<int>(),
               workingDate: It.IsAny<DateTime>(),
               secondsOfWork: It.IsAny<int>(),
-              note: It.IsAny<string>(),
+              note: string.Empty,
               companyId: It.IsAny<int>(),
               employeeId: tmpEmployeeId,
               editorId: tmpEditorId
@@ -150,7 +150,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.WorkingTime
               routeId: It.IsAny<int>(),
               workingDate: It.IsAny<DateTime>(),
               secondsOfWork: It.IsAny<int>(),
-              note: It.IsAny<string>(),
+              note: string.Empty,
               companyId: tmpCompanyId,
               employeeId: It.IsAny<int>(),
               editorId: It.IsAny<int>()
@@ -178,13 +178,15 @@ namespace JTM.UnitTests.CQRS_Tests.Command.WorkingTime
             MockUnitOfWork
                 .Setup(x => x.CompanyRepository.AnyAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(true));
+            MockUnitOfWork
+                .Setup(x => x.SaveChangesAsync());
 
             var command = new UpdateWorkingTimeCommand(
               headerId: It.IsAny<int>(),
               routeId: It.IsAny<int>(),
               workingDate: It.IsAny<DateTime>(),
               secondsOfWork: It.IsAny<int>(),
-              note: It.IsAny<string>(),
+              note: string.Empty,
               companyId: It.IsAny<int>(),
               employeeId: It.IsAny<int>(),
               editorId: It.IsAny<int>()
@@ -207,13 +209,15 @@ namespace JTM.UnitTests.CQRS_Tests.Command.WorkingTime
             MockUnitOfWork
                .Setup(x => x.UserRepository.AnyAsync(It.IsAny<int>()))
                .Returns(Task.FromResult(true));
+            MockUnitOfWork
+                .Setup(x => x.SaveChangesAsync());
 
             var command = new UpdateWorkingTimeCommand(
               headerId: It.IsAny<int>(),
               routeId: It.IsAny<int>(),
               workingDate: It.IsAny<DateTime>(),
               secondsOfWork: It.IsAny<int>(),
-              note: It.IsAny<string>(),
+              note: string.Empty,
               companyId: null,
               employeeId: It.IsAny<int>(),
               editorId: It.IsAny<int>()

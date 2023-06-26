@@ -15,7 +15,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult<User?>(null));
 
-            var command = new ConfirmAccountCommand(It.IsAny<int>(), It.IsAny<string>());
+            var command = new ConfirmAccountCommand(It.IsAny<int>(), string.Empty);
             var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
@@ -39,7 +39,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
-            var command = new ConfirmAccountCommand(tmpUser.Id, It.IsAny<string>());
+            var command = new ConfirmAccountCommand(tmpUser.Id, string.Empty);
             var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
@@ -64,7 +64,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Setup(x => x.UserRepository.GetByIdAsync(It.IsAny<int>()))
                 .Returns(Task.FromResult(tmpUser));
 
-            var command = new ConfirmAccountCommand(tmpUser.Id, It.IsAny<string>());
+            var command = new ConfirmAccountCommand(tmpUser.Id, string.Empty);
             var commandHandler = new ConfirmAccountCommandHandler(MockUnitOfWork.Object);
 
             // Act
