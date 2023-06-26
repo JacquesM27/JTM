@@ -5,7 +5,7 @@ using Moq;
 using System.Linq.Expressions;
 using Model = JTM.Data.Model;
 
-namespace JTM.UnitTests.CQRS_Tests.Queries.Company
+namespace JTM.UnitTests.CQRS_Tests.Query.Company
 {
     public class GetCompanyTests : UnitTestBase
     {
