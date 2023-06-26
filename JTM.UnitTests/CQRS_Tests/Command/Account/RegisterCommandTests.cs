@@ -20,8 +20,8 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
                 .Setup(c => c.UserRepository.QuerySingleAsync(It.IsAny<Expression<Func<User, bool>>>()))
                 .Returns(Task.FromResult<User?>(new User()));
 
-            var command = new RegisterUserCommand(string.Empty, string.Empty, string.Empty, UserRole.user);
-            var commandHandler = new RegisterUserCommandHandler(MockUnitOfWork.Object, MockRabbitService.Object);
+            var command = new RegisterCommand(string.Empty, string.Empty, string.Empty, UserRole.user);
+            var commandHandler = new RegisterCommandHandler(MockUnitOfWork.Object, MockRabbitService.Object);
 
             // Act
             async Task HandleCommand() => await commandHandler.Handle(command, default);
@@ -43,8 +43,8 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
             MockUnitOfWork
                 .Setup(c => c.UserRepository.AddAsync(It.IsAny<User>()));
 
-            var command = new RegisterUserCommand(string.Empty, string.Empty, string.Empty, UserRole.user);
-            var commandHandler = new RegisterUserCommandHandler(MockUnitOfWork.Object, MockRabbitService.Object);
+            var command = new RegisterCommand(string.Empty, string.Empty, string.Empty, UserRole.user);
+            var commandHandler = new RegisterCommandHandler(MockUnitOfWork.Object, MockRabbitService.Object);
 
             // Act
             await commandHandler.Handle(command, default);

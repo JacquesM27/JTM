@@ -11,18 +11,18 @@ using System.Security.Cryptography;
 
 namespace JTM.CQRS.Command.Account
 {
-    public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
+    public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRabbitService _rabbitService;
 
-        public RegisterUserCommandHandler(IUnitOfWork unitOfWork, IRabbitService rabbitService)
+        public RegisterCommandHandler(IUnitOfWork unitOfWork, IRabbitService rabbitService)
         {
             _unitOfWork = unitOfWork;
             _rabbitService = rabbitService;
         }
 
-        public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             await CheckEmailUniqueness(request.Email);
 

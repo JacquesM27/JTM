@@ -5,16 +5,16 @@ using System.Data.SqlTypes;
 
 namespace JTM.CQRS.Command.Account
 {
-    public sealed class BanUserCommandHandler : IRequestHandler<BanUserCommand, int>
+    public sealed class BanCommandHandler : IRequestHandler<BanCommand, int>
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public BanUserCommandHandler(IUnitOfWork unitOfWork)
+        public BanCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> Handle(BanUserCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(BanCommand request, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId)
                  ?? throw new AuthException("Invalid user.");

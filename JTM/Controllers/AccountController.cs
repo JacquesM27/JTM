@@ -33,7 +33,7 @@ namespace JTM.Controllers
         {
             _validator.ValidateAndThrow(request);
 
-            var command = new RegisterUserCommand(
+            var command = new RegisterCommand(
                 userName: request.UserName,
                 email: request.Email,
                 password: request.Password,
@@ -49,7 +49,7 @@ namespace JTM.Controllers
         {
             _validator.ValidateAndThrow(request);
 
-            var command = new RegisterUserCommand(
+            var command = new RegisterCommand(
                 userName: request.UserName,
                 email: request.Email,
                 password: request.Password,
@@ -124,7 +124,7 @@ namespace JTM.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<int>> BanUser(int userId)
         {
-            var command = new BanUserCommand(userId: userId);
+            var command = new BanCommand(userId: userId);
             int result = await _mediator.Send(command);
             return Ok(result);
         }
@@ -134,7 +134,7 @@ namespace JTM.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<int>> UnbanUser(int userId)
         {
-            var command = new UnbanUserCommand(userId: userId);
+            var command = new UnbanCommand(userId: userId);
             int result = await _mediator.Send(command);
             return Ok(result);
         }
