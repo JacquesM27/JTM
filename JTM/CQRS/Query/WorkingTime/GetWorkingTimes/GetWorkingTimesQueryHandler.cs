@@ -3,7 +3,7 @@ using JTM.DTO.WorkingTime;
 using MediatR;
 using System.Linq.Expressions;
 
-namespace JTM.CQRS.Query.WorkingTime.GetWorkingTimes
+namespace JTM.CQRS.Query.WorkingTime
 {
     public class GetWorkingTimesQueryHandler : IRequestHandler<GetWorkingTimesQuery, IEnumerable<BasicWorkingTimeDto>>
     {

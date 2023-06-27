@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using JTM.CQRS.Command.WorkingTime;
 using JTM.CQRS.Query.WorkingTime;
-using JTM.CQRS.Query.WorkingTime.GetWorkingTimes;
 using JTM.DTO.WorkingTime;
 using JTM.DTO.WorkingTime.AddWorkingTime;
 using JTM.DTO.WorkingTime.UpdateWorkingTime;

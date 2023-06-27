@@ -1,7 +1,7 @@
 ﻿using JTM.DTO.WorkingTime;
 using MediatR;
 
-namespace JTM.CQRS.Query.WorkingTime.GetWorkingTimes
+namespace JTM.CQRS.Query.WorkingTime
 {
     public class GetWorkingTimesQuery : IRequest<IEnumerable<BasicWorkingTimeDto>>
     {
