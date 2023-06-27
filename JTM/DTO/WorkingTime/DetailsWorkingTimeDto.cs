@@ -9,6 +9,6 @@
         public string EmployeeName { get; set; } = string.Empty;
         public string AuthorName { get; set; } = string.Empty;
         public string LastEditorName { get; set; } = string.Empty;
-        public string Company { get; set; } = string.Empty;
+        public string? Company { get; set; }
     }
 }

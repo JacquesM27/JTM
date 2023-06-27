@@ -28,7 +28,7 @@ namespace JTM.CQRS.Query.WorkingTime
                 wt => wt.LastEditor
             };
             var workingTime = await _unitOfWork.WorkingTimeRepository.QuerySingleAsync(filter, includeProperties)
-                ?? throw new WorkingTimeException($"Working time with id:{request.WorkingTimeId} does not exist.");
+                ?? throw new WorkingTimeException($"Working time with id: {request.WorkingTimeId} does not exist.");
 
             return new DetailsWorkingTimeDto()
             {
@@ -39,7 +39,7 @@ namespace JTM.CQRS.Query.WorkingTime
                 EmployeeName = workingTime.Employee.Username,
                 AuthorName = workingTime.Author.Username,
                 LastEditorName = workingTime.LastEditor.Username,
-                Company = workingTime.Company.Name
+                Company = workingTime.Company?.Name
             };
         }
     }
