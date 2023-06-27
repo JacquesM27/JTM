@@ -1,12 +1,7 @@
 ﻿using JTM.CQRS.Query.WorkingTime;
 using JTM.DTO.WorkingTime;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Model = JTM.Data.Model;
 
 namespace JTM.UnitTests.CQRS_Tests.Query.WorkingTime
