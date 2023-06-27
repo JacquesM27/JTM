@@ -14,7 +14,6 @@ namespace JTM.UnitTests.CQRS_Tests.Query.Company
         {
             // Arrange 
             int tmpId = -1;
-            Expression<Func<Model.Company, bool>> filter = c => c.Id == tmpId;
             MockUnitOfWork
                 .Setup(c => c.CompanyRepository.QuerySingleAsync(It.IsAny<Expression<Func<Model.Company, bool>>>()))
                 .Returns(Task.FromResult<Model.Company?>(null));
