@@ -1,5 +1,7 @@
 ﻿using JTM.Data;
+using JTM.IntegrationTests.Helpers;
 using JTM.Services.RabbitService;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
@@ -25,9 +27,10 @@ namespace JTM.IntegrationTests.ControllersTests
                         services.Remove(dbContextOptions!);
                         services.AddDbContext<DataContext>(options =>
                             options.UseInMemoryDatabase("Jtm_InMemory"));
+                        services.AddSingleton<IPolicyEvaluator, FakeAdminPolicyEvaluator>();
+                        services.AddMvc(option => option.Filters.Add(new FakeAdminFilter()));
                         //services.AddDbContext<DataContext>(options =>
                         //    options.UseSqlServer(_testConnectionString));
-                        //services.AddSingleton(_authServiceMock.Object);
                     });
                 })
                 .CreateClient();
