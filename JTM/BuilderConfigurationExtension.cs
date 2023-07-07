@@ -65,13 +65,13 @@ namespace JTM
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ValidateIssuer = true,
+                        ValidIssuer = builder.Configuration.GetSection("JWT:Issuer").Value,
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-                            .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-                        ValidateIssuer = true,
-                        ValidIssuer = "secret key",
+                            .GetBytes(builder.Configuration.GetSection("JWT:SigningKey").Value)),
                         ValidateAudience = true,
-                        ValidAudience = "secret key2"
+                        ValidAudience = builder.Configuration.GetSection("JWT:Audience").Value
                     };
                 });
         }

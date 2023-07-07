@@ -28,15 +28,15 @@ namespace JTM.Services.TokenService
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _configuration.GetSection("AppSettings:Token").Value));
+                _configuration.GetSection("JWT:SigningKey").Value));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds,
-                issuer: "secret key",
-                audience: "secret key2"
+                issuer: _configuration.GetSection("JWT:Issuer").Value,
+                audience: _configuration.GetSection("JWT:Audience").Value
                 );
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
@@ -48,7 +48,7 @@ namespace JTM.Services.TokenService
             var refreshToken = new RefreshTokenDto()
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(1),
                 Created = DateTime.UtcNow
             };
             return refreshToken;

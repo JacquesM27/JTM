@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.ConfigureSwagger();
 builder.ConfigureMiddlewareServices();
 builder.ConfigureMediatr();
-builder.ConfigureMediatr();
+builder.ConfigureServices();
 builder.Services.AddHttpContextAccessor();
 builder.ConfigureDbContext();
 builder.ConfigureAuthentication();
