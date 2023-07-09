@@ -1,4 +1,6 @@
 ﻿using JTM.Data;
+using JTM.DTO.Account.RegisterUser;
+using JTM.DTO.ExceptionResponse;
 using JTM.IntegrationTests.Helpers;
 using JTM.Services.RabbitService;
 using Microsoft.AspNetCore.Authorization.Policy;
@@ -6,20 +8,27 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Moq;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace JTM.IntegrationTests.ControllersTests
 {
-    public class AuthControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class AuthControllerWithoutFakePolicyTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly HttpClient _httpClient;
-        private readonly DataContext _dataContext;
-        private readonly Mock<IRabbitService> _mockRabbitService;
+        private readonly Mock<IBrokerService> _mockRabbitService;
+        private readonly WebApplicationFactory<Program> _factory;
 
-        public AuthControllerTests(WebApplicationFactory<Program> factory)
+        public AuthControllerWithoutFakePolicyTests(WebApplicationFactory<Program> factory)
         {
-            _httpClient = factory
+            _mockRabbitService = new();
+            _factory = factory
                 .WithWebHostBuilder(builder =>
                 {
+                    builder.ConfigureAppConfiguration((hostingContext, config) =>
+                    {
+                        config.AddJsonFile("appsettings.Test.json", optional: true, reloadOnChange: true);
+                    });
                     builder.ConfigureServices(services =>
                     {
                         var dbContextOptions = services.SingleOrDefault(service =>
@@ -27,20 +36,60 @@ namespace JTM.IntegrationTests.ControllersTests
                         services.Remove(dbContextOptions!);
                         services.AddDbContext<DataContext>(options =>
                             options.UseInMemoryDatabase("Jtm_InMemory"));
-                        services.AddSingleton<IPolicyEvaluator, FakeAdminPolicyEvaluator>();
-                        services.AddMvc(option => option.Filters.Add(new FakeAdminFilter()));
+                        //services.AddSingleton<IPolicyEvaluator, FakeAdminPolicyEvaluator>();
+                        //services.AddMvc(option => option.Filters.Add(new FakeAdminFilter()));
                         //services.AddDbContext<DataContext>(options =>
                         //    options.UseSqlServer(_testConnectionString));
                     });
-                })
-                .CreateClient();
-            _mockRabbitService = new();
+                });
+            _httpClient =  factory.CreateClient();
         }
 
         [Fact]
-        public async Task Register_ForValidUser_ReturnOk()
+        public async Task Register_ForTotallyWrongUser_ReturnForbiddenStatusCode()
         {
+            // Arrage
+            var dto = new RegisterUserDto("", "", "", "", "");
+            var content = dto.ToJsonHttpContent();
 
+            // Act
+            var response = await _httpClient.PostAsync("/api/Account/register", content);
+            var errorMessage = await response.FromJsonHttpResponseMessage<ExceptionResponse>();
+
+            // Arrange
+            Assert.Equal(System.Net.HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal(403, errorMessage!.StatusCode);
+            Assert.Equal("ValidationErrors", errorMessage!.Title);
+            Assert.NotEmpty(errorMessage!.Errors);
+        }
+
+        [Fact]
+        public async Task Register_ForBusyEmail_ReturnForbiddenStatusCode()
+        {
+            // Arrange
+            string tmpEmail = "test@test.test";
+            var dto = new RegisterUserDto("123", tmpEmail, tmpEmail, "12345Abc!@", "12345Abc!@");
+            var content = dto.ToJsonHttpContent();
+            await SeedUser(new Data.Model.User { Email = tmpEmail, EmailConfirmed = true });
+
+            // Act
+            var response = await _httpClient.PostAsync("/api/Account/register", content);
+            var errorMessage = await response.FromJsonHttpResponseMessage<ExceptionResponse>();
+
+            // Arrange
+            Assert.Equal(System.Net.HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Equal(403, errorMessage!.StatusCode);
+            Assert.Equal("ValidationErrors", errorMessage!.Title);
+            Assert.NotEmpty(errorMessage!.Errors);
+        }
+
+        private async Task SeedUser(Data.Model.User user)
+        {
+            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
+            using var scope = scopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetService<DataContext>();
+            await dataContext.Users.AddAsync(user);
+            await dataContext.SaveChangesAsync();
         }
 
         [Fact]
