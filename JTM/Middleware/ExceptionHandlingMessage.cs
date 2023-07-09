@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using JTM.DTO.ExceptionResponse;
 using JTM.Exceptions;
 using System.Text.Json;
 
@@ -22,12 +23,11 @@ namespace JTM.Middleware
         private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
             var statusCode = GetStatusCode(exception);
-            var response = new
-            {
-                Title = GetTitle(exception),
-                Status = statusCode,
-                Errors = GetErrors(exception)
-            };
+            var response = new ExceptionResponse(
+                title: GetTitle(exception),
+                statusCode: statusCode,
+                errors: GetErrors(exception));
+
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = statusCode;
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
@@ -53,12 +53,12 @@ namespace JTM.Middleware
                 _ => "ServerError"
             };
 
-        private IEnumerable<object>? GetErrors(Exception exception)
+        private IEnumerable<ExceptionError> GetErrors(Exception exception)
         {
-            IEnumerable<object>? errors = exception switch
+            IEnumerable<ExceptionError> errors = exception switch
             {
-                ValidationException ex => ex.Errors.Select(err => new { err.PropertyName, err.ErrorMessage }),
-                _ => new List<object> { exception.Message },
+                ValidationException ex => ex.Errors.Select(err => new ExceptionError(err.PropertyName, err.ErrorMessage)),
+                _ => new List<ExceptionError> { new ExceptionError(exception.Message) }
             };
             return errors;
         }
