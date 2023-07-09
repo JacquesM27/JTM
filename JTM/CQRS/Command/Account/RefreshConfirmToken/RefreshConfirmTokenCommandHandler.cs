@@ -12,9 +12,9 @@ namespace JTM.CQRS.Command.Account
     public sealed class RefreshConfirmTokenCommandHandler : IRequestHandler<RefreshConfirmTokenCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRabbitService _rabbitService;
+        private readonly IBrokerService _rabbitService;
 
-        public RefreshConfirmTokenCommandHandler(IUnitOfWork unitOfWork, IRabbitService rabbitService)
+        public RefreshConfirmTokenCommandHandler(IUnitOfWork unitOfWork, IBrokerService rabbitService)
         {
             _unitOfWork = unitOfWork;
             _rabbitService = rabbitService;

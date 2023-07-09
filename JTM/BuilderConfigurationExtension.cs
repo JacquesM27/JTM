@@ -47,7 +47,7 @@ namespace JTM
 
         public static void ConfigureServices(this WebApplicationBuilder builder)
         {
-            builder.Services.AddSingleton<IRabbitService, RabbitService>();
+            builder.Services.AddSingleton<IBrokerService, RabbitService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

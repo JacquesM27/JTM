@@ -28,7 +28,7 @@ namespace JTM.Services.TokenService
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _configuration.GetSection("JWT:SigningKey").Value));
+                _configuration.GetSection("JWT:SigningKey").Value!));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(

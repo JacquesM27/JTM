@@ -10,7 +10,7 @@ namespace JTM.UnitTests.CQRS_Tests.Command.Account
     {
         protected readonly Mock<IUnitOfWork> MockUnitOfWork;
         protected readonly Mock<IUserRepository> MockUserRepository;
-        protected readonly Mock<IRabbitService> MockRabbitService;
+        protected readonly Mock<IBrokerService> MockRabbitService;
         protected readonly Mock<ITokenService> MockTokenService;
 
         protected AccountTestsBase()

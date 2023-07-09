@@ -14,10 +14,10 @@ namespace JTM.CQRS.Command.Account
     public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRabbitService _rabbitService;
+        private readonly IBrokerService _rabbitService;
 
-        public RegisterCommandHandler(IUnitOfWork unitOfWork, IRabbitService rabbitService)
-        {
+        public RegisterCommandHandler(IUnitOfWork unitOfWork, IBrokerService rabbitService)
+        {   
             _unitOfWork = unitOfWork;
             _rabbitService = rabbitService;
         }

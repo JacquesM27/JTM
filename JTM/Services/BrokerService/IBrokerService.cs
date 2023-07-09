@@ -3,7 +3,7 @@ using JTM.Enum;
 
 namespace JTM.Services.RabbitService
 {
-    public interface IRabbitService
+    public interface IBrokerService
     {
         void SendMessage(MessageQueueType messageQueueType, MessageDto message);
     }

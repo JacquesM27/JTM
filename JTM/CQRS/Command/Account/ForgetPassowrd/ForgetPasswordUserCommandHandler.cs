@@ -12,9 +12,9 @@ namespace JTM.CQRS.Command.Account
     public sealed class ForgetPasswordUserCommandHandler : IRequestHandler<ForgetPasswordCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRabbitService _rabbitService;
+        private readonly IBrokerService _rabbitService;
 
-        public ForgetPasswordUserCommandHandler(IUnitOfWork unitOfWork, IRabbitService rabbitService)
+        public ForgetPasswordUserCommandHandler(IUnitOfWork unitOfWork, IBrokerService rabbitService)
         {
             _unitOfWork = unitOfWork;
             _rabbitService = rabbitService;
