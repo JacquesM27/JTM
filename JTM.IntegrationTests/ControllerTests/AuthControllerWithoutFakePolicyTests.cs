@@ -2,47 +2,20 @@
 using JTM.DTO.Account.RegisterUser;
 using JTM.DTO.ExceptionResponse;
 using JTM.IntegrationTests.Helpers;
-using JTM.Services.RabbitService;
-using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Moq;
-using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace JTM.IntegrationTests.ControllersTests
 {
+
     public class AuthControllerWithoutFakePolicyTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly HttpClient _httpClient;
-        private readonly Mock<IBrokerService> _mockRabbitService;
         private readonly WebApplicationFactory<Program> _factory;
 
-        public AuthControllerWithoutFakePolicyTests(WebApplicationFactory<Program> factory)
+        public AuthControllerWithoutFakePolicyTests()
         {
-            _mockRabbitService = new();
-            _factory = factory
-                .WithWebHostBuilder(builder =>
-                {
-                    builder.ConfigureAppConfiguration((hostingContext, config) =>
-                    {
-                        config.AddJsonFile("appsettings.Test.json", optional: true, reloadOnChange: true);
-                    });
-                    builder.ConfigureServices(services =>
-                    {
-                        var dbContextOptions = services.SingleOrDefault(service =>
-                            service.ServiceType == typeof(DbContextOptions<DataContext>));
-                        services.Remove(dbContextOptions!);
-                        services.AddDbContext<DataContext>(options =>
-                            options.UseInMemoryDatabase("Jtm_InMemory"));
-                        //services.AddSingleton<IPolicyEvaluator, FakeAdminPolicyEvaluator>();
-                        //services.AddMvc(option => option.Filters.Add(new FakeAdminFilter()));
-                        //services.AddDbContext<DataContext>(options =>
-                        //    options.UseSqlServer(_testConnectionString));
-                    });
-                });
-            _httpClient =  factory.CreateClient();
+            _factory = new TestWebApplicationFactory();
+            _httpClient =  _factory.CreateClient();
         }
 
         [Fact]
