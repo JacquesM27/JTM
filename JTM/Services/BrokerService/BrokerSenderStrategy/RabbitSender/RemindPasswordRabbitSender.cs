@@ -3,7 +3,7 @@ using System.Text;
 
 namespace JTM.Services.BrokerService.BrokerSenderStrategy.RabbitSender
 {
-    public class RemindPasswordRabbitSender : RabbitSenderBase, IBrokerSender
+    public sealed class RemindPasswordRabbitSender : RabbitSenderBase, IBrokerSender
     {
         protected readonly string _reminderPasswordRoutingKey;
 

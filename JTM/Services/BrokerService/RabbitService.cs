@@ -17,18 +17,12 @@ namespace JTM.Services.RabbitService
 
         public void SendMessage(MessageQueueType messageQueueType, MessageDto message)
         {
-            IBrokerSender sender;
-            switch (messageQueueType)
+            IBrokerSender sender = messageQueueType switch
             {
-                case MessageQueueType.PasswordRemind:
-                    sender = new RemindPasswordRabbitSender(_configuration);
-                    break;
-                case MessageQueueType.AccountActivate:
-                    sender = new ConfirmAccountRabbitSender(_configuration);
-                    break;
-                default:
-                    throw new ArgumentException($"MessageQueueType: {messageQueueType} is not implemented!");
-            }
+                MessageQueueType.PasswordRemind => new RemindPasswordRabbitSender(_configuration),
+                MessageQueueType.AccountActivate => new ConfirmAccountRabbitSender(_configuration),
+                _ => throw new ArgumentException($"MessageQueueType: {messageQueueType} is not handled!"),
+            };
             sender.PublishMessage(JsonSerializer.Serialize(message));
         }
     }

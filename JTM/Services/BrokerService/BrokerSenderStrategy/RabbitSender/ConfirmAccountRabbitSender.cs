@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using System.Text;
 
 namespace JTM.Services.BrokerService.BrokerSenderStrategy.RabbitSender
 {
-    public class ConfirmAccountRabbitSender : RabbitSenderBase, IBrokerSender
+    public sealed class ConfirmAccountRabbitSender : RabbitSenderBase, IBrokerSender
     {
         private readonly string _activateAccountRoutingKey;
 
