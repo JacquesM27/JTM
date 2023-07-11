@@ -90,11 +90,11 @@ namespace JTM.Controllers
 
         [HttpPost]
         [Route("confirm")]
-        public async Task<ActionResult> ConfirmAccount(int userId, string token)
+        public async Task<ActionResult> ConfirmAccount(ConfirmDto request)
         {
             var command = new ConfirmAccountCommand(
-                userId: userId,
-                token: token);
+                userId: request.UserId,
+                token: request.Token);
             await _mediator.Send(command);
             return Ok();
         }

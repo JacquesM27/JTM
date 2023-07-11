@@ -6,16 +6,17 @@ using JTM.DTO.ExceptionResponse;
 using JTM.Helper.PasswordHelper;
 using JTM.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Mvc.Testing;
+using System.Security.Cryptography;
 
 namespace JTM.IntegrationTests.ControllersTests
 {
 
-    public class AuthControllerWithoutFakePolicyTests : IClassFixture<WebApplicationFactory<Program>>
+    public class AccountControllerWithoutFakePolicyTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly HttpClient _httpClient;
         private readonly WebApplicationFactory<Program> _factory;
 
-        public AuthControllerWithoutFakePolicyTests()
+        public AccountControllerWithoutFakePolicyTests()
         {
             _factory = new TestWebApplicationFactory();
             _httpClient =  _factory.CreateClient();
@@ -149,6 +150,111 @@ namespace JTM.IntegrationTests.ControllersTests
             Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
         }
 
+        [Fact]
+        public async Task ConfirmAccount_ForInvalidUser_ShouldReturnBadRequest()
+        {
+            // Arrange
+            ConfirmDto request = new(1, "");
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/Account/confirm", request);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_ForValidUser_ShouldReturnOk()
+        {
+            // Arrange
+            var tmpUser = await SeedUnconfirmedUser("test@unconfirmed.com", "12345Abc!@");
+            ConfirmDto request = new(tmpUser.Id, tmpUser.ActivationToken!);
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/Account/confirm", request);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task RefreshConfirmToken_ForInvalidUser_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = new EmailDto(string.Empty);
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/Account/confirm-refresh", request);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task RefreshConfirmToken_ForValidUser_ShouldReturnOk()
+        {
+            // Arrange
+            string email = "refresh@unconfirmed.com";
+            await SeedUnconfirmedUser(email, "12345Abc!@");
+            var request = new EmailDto(email);
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/Account/confirm-refresh", request);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ChangePassword_ForInvalidUser_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var request = new ChangePasswordDto(1, string.Empty, string.Empty);
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/Account/change-password", request);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ChangePassword_ForValidUser_ShouldReturnOk()
+        {
+            // Arrange
+            string email = "forgot@password.com";
+            var user = await SeedConfirmedUser(email, "12345Abc!@");
+            var request = new ChangePasswordDto(user.Id, "@!cbA54321", user.PasswordResetToken!);
+
+            // Act
+            var response = await _httpClient.PostAsJsonAsync("/api/Account/change-password", request);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Banhammer_ForUnauthorizedTry_ShouldReturnUnauthorized()
+        {
+            // Arrange
+            // Act
+            var response = await _httpClient.PostAsync("/api/Account/banhammer?userId=0", null);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Unban_ForUnauthorizedTry_ShouldReturnUnauthorized()
+        {
+            // Arrange
+            // Act
+            var response = await _httpClient.PostAsync("/api/Account/unban?userId=0", null);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
         private async Task SeedUser(User user)
         {
             var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
@@ -158,7 +264,7 @@ namespace JTM.IntegrationTests.ControllersTests
             await dataContext.SaveChangesAsync();
         }
 
-        private async Task SeedConfirmedUser(string email, string password)
+        private async Task<User> SeedConfirmedUser(string email, string password)
         {
             PasswordHelper.CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
             var someUser = new User()
@@ -167,13 +273,37 @@ namespace JTM.IntegrationTests.ControllersTests
                 Banned = false,
                 EmailConfirmed = true,
                 PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
+                PasswordSalt = passwordSalt,
+                PasswordTokenExpires = DateTime.UtcNow.AddDays(1),
+                PasswordResetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
+        };
+            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
+            using var scope = scopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetService<DataContext>();
+            await dataContext.Users.AddAsync(someUser);
+            await dataContext.SaveChangesAsync();
+            return someUser;
+        }
+
+        private async Task<User> SeedUnconfirmedUser(string email, string password)
+        {
+            PasswordHelper.CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+            var someUser = new User()
+            {
+                Email = email,
+                Banned = false,
+                EmailConfirmed = false,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                ActivationToken = Guid.NewGuid().ToString(),
+                ActivationTokenExpires = DateTime.UtcNow.AddMinutes(10)
             };
             var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
             using var scope = scopeFactory.CreateScope();
             var dataContext = scope.ServiceProvider.GetService<DataContext>();
             await dataContext.Users.AddAsync(someUser);
             await dataContext.SaveChangesAsync();
+            return someUser;
         }
     }
 }
