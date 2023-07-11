@@ -70,6 +70,7 @@ namespace JTM.Controllers
         }
 
         [HttpPost("refresh-token")]
+        [Authorize]
         public async Task<ActionResult<AuthResponseDto>> RefreshToken()
         {
             var refreshToken = _httpContextAccessor?.HttpContext?.Request.Cookies["refreshToken"];
@@ -80,9 +81,9 @@ namespace JTM.Controllers
 
         [HttpPost]
         [Route("forget-password")]
-        public async Task<ActionResult> ForgetPassword(string email)
+        public async Task<ActionResult> ForgetPassword(EmailDto request)
         {
-            var command = new ForgetPasswordCommand(email: email);
+            var command = new ForgetPasswordCommand(email: request.Email);
             await _mediator.Send(command);
             return Ok();
         }
@@ -100,9 +101,9 @@ namespace JTM.Controllers
 
         [HttpPost]
         [Route("confirm-refresh")]
-        public async Task<ActionResult<AuthResponseDto>> RefreshConfirmToken(string email)
+        public async Task<ActionResult<AuthResponseDto>> RefreshConfirmToken(EmailDto request)
         {
-            var command = new RefreshConfirmTokenCommand(email: email);
+            var command = new RefreshConfirmTokenCommand(email: request.Email);
             await _mediator.Send(command);
             return Ok();
         }
